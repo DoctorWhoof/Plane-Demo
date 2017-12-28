@@ -6,9 +6,7 @@ Namespace plane
 #Import "<mojo3d>"
 
 #Import "textures/"
-#Import "models/plane/"
-
-'#Import "util"
+#Import "models/plane.glb"
 
 Using std..
 Using mojo..
@@ -59,11 +57,11 @@ Class MyWindow Extends Window
 		_water=Model.CreateBox( New Boxf( -2000,-1,-2000,2000,0,2000 ),1,1,1,waterMaterial )
 		
 		'create fog
-		_fog = New FogEffect( New Color(0.69, 0.78, 0.82, 0.5 ), 1, 500 )
+		_fog = New FogEffect( New Color(0.69, 0.78, 0.82, 0.7 ), 1, 500 )
 		_scene.AddPostEffect( _fog )
 		
 		'create airplane
-		_plane = Model.Load( "asset::plane.gltf" )
+		_plane = Model.Load( "asset::plane.glb" )
 		_plane.Position = New Vec3f( 0, 3, 0 )
 		
 		
@@ -85,7 +83,7 @@ Class MyWindow Extends Window
 		_scene.Render( canvas,_camera )
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 		
-		Local delta := App.FPS / 60.0
+		Local delta := 60.0 / App.FPS 
 		Local dist := 15.0
 		
 		_plane.Move( 0, 0, 1.0 * delta )
