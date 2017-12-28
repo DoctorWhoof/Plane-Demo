@@ -36,8 +36,7 @@ Class MyWindow Extends Window
 		
 		'create light
 		_light=New Light
-		_light.RotateX( 45 )
-		_light.RotateY( 45 )
+		_light.Rotate( 45, 45, 0 )
 		_light.CastsShadow = True
 		
 		'create water material
@@ -59,7 +58,7 @@ Class MyWindow Extends Window
 		_water=Model.CreateBox( New Boxf( -2000,-1,-2000,2000,0,2000 ),1,1,1,waterMaterial )
 		
 		'create fog
-		_fog = New FogEffect( New Color(0.69, 0.78, 0.82, 0.7 ), 1, 500 )
+		_fog = New FogEffect( New Color(0.69, 0.78, 0.82, 0.7 ), 1, 1000 )
 		_scene.AddPostEffect( _fog )
 		
 		'create airplane
@@ -77,24 +76,21 @@ Class MyWindow Extends Window
 		_camera.Parent = _camTarget
 		_camera.PointAt( New Vec3f( 0 ) )
 		
-		
-		For Local mat := Eachin _plane.Materials
-			Local pbr := Cast<PbrMaterial>( mat )
-			pbr.RoughnessFactor = 0.2
-		Next
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 		RequestRender()
 		
-		_scene.Render( canvas,_camera )
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		_water.Position=New Vec3f( Round(_camera.Position.x/2000)*2000,0,Round(_camera.Position.z/2000)*2000 )
 		
 		Local delta := 60.0 / App.FPS 
 		Local dist := 15.0
 		
 		_plane.Move( 0, 0, 1.0 * delta )
 		_camTarget.Rotate( 0, 0.2 * delta, 0 )
+		_scene.Render( canvas,_camera )
+		
+		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 '	
 	Method OnMeasure:Vec2i() Override
