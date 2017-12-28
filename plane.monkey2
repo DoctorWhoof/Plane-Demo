@@ -16,6 +16,8 @@ Using mojo3d..
 
 Class MyWindow Extends Window
 	
+	Const _res := New Vec2i( 1280, 720 )
+	
 	Field _scene:Scene
 	Field _camera:Camera
 	Field _light:Light
@@ -25,9 +27,10 @@ Class MyWindow Extends Window
 	Field _plane:Model
 	Field _camTarget:Entity
 	
-	Method New( title:String="Toy Plane",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
+	Method New()
 
-		Super.New( title,width,height,flags )
+		Super.New( "Toy Plane",_res.X,_res.Y,WindowFlags.Resizable | WindowFlags.HighDPI  )
+		Layout = "letterbox"
 		
 		_scene=Scene.GetCurrent()
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
@@ -87,8 +90,10 @@ Class MyWindow Extends Window
 		
 		_plane.Move( 0, 0, 1.0 * delta )
 		_camTarget.Rotate( 0, 0.2 * delta, 0 )
-
-
+	End
+'	
+	Method OnMeasure:Vec2i() Override
+		Return _res
 	End
 	
 End
