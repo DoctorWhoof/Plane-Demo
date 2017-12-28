@@ -37,6 +37,8 @@ Class MyWindow Extends Window
 		'create light
 		_light=New Light
 		_light.RotateX( 45 )
+		_light.RotateY( 45 )
+		_light.CastsShadow = True
 		
 		'create water material
 		Local waterMaterial:=New WaterMaterial
@@ -62,8 +64,7 @@ Class MyWindow Extends Window
 		
 		'create airplane
 		_plane = Model.Load( "asset::plane.glb" )
-		_plane.Position = New Vec3f( 0, 3, 0 )
-		
+		_plane.Position = New Vec3f( 0, 6, 0 )
 		
 		'create camera
 		_camera=New Camera
@@ -75,6 +76,12 @@ Class MyWindow Extends Window
 		_camTarget = New Entity( _plane )
 		_camera.Parent = _camTarget
 		_camera.PointAt( New Vec3f( 0 ) )
+		
+		
+		For Local mat := Eachin _plane.Materials
+			Local pbr := Cast<PbrMaterial>( mat )
+			pbr.RoughnessFactor = 0.2
+		Next
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
