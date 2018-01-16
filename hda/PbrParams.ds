@@ -1,0 +1,77 @@
+{
+    name	selectedparms
+
+    parm {
+        name    "ColorFactor"
+        label   "Color Factor"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        range   { 0 1 }
+    }
+    parm {
+        name    "EmissiveFactor"
+        label   "Emissive Factor"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        range   { 0 1 }
+    }
+    parm {
+        name    "RoughnessFactor"
+        label   "Roughness Factor"
+        type    float
+        default { "0.5" }
+        range   { 0 1 }
+    }
+    parm {
+        name    "MetalnessFactor"
+        label   "Metalness Factor"
+        type    float
+        default { "0" }
+        range   { 0 1 }
+    }
+    parm {
+        name    "sepparm"
+        label   "Separator"
+        type    separator
+        default { "" }
+    }
+    parm {
+        name    "ColorTexture"
+        label   "Color Texture"
+        type    image
+        default { "" }
+    }
+    parm {
+        name    "EmissiveTexture"
+        label   "Emissive Texture"
+        type    image
+        default { "" }
+    }
+    parm {
+        name    "RoughnessTexture"
+        label   "Roughness Texture"
+        type    image
+        default { "" }
+    }
+    parm {
+        name    "MetalnessTexture"
+        label   "Metalness Texture"
+        type    image
+        default { "" }
+    }
+    parm {
+        name    "NormalTexture"
+        label   "Normal Texture"
+        type    image
+        default { "" }
+    }
+    parm {
+        name    "OcclusionTexture"
+        label   "Occlusion Texture"
+        type    image
+        default { "" }
+    }
+
+}

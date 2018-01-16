@@ -5,6 +5,8 @@ Namespace plane
 #Import "<mojo>"
 #Import "<mojo3d>"
 
+#Import "source/PlaneControl"
+
 #Import "textures/"
 #Import "models/plane.glb"
 
@@ -14,7 +16,7 @@ Using mojo3d..
 
 Class MyWindow Extends Window
 	
-	Const _res := New Vec2i( 1280, 720 )
+	Global _res :Vec2i
 	
 	Field _scene:Scene
 	Field _camera:Camera
@@ -23,11 +25,15 @@ Class MyWindow Extends Window
 	
 	Field _water:Model
 	Field _plane:Model
+	Field _pivot:Model		'Needs to be a Model instead of Entity otherwise the plane isn't rendered!
+		
 	Field _camTarget:Entity
+	Field test:Model
+	
 	
 	Method New()
-
-		Super.New( "Toy Plane",_res.X,_res.Y,WindowFlags.Resizable | WindowFlags.HighDPI  )
+		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
+		_res = New Vec2i( Width, Height )
 		Layout = "letterbox"
 		
 		_scene=Scene.GetCurrent()
@@ -47,8 +53,8 @@ Class MyWindow Extends Window
 		waterMaterial.Roughness=0
 		
 		waterMaterial.NormalTextures=New Texture[]( 
-			Texture.Load( "asset::water_normal0.png",TextureFlags.WrapST|TextureFlags.FilterMipmap ),
-			Texture.Load( "asset::water_normal1.png",TextureFlags.WrapST|TextureFlags.FilterMipmap ) )
+			Texture.Load( "asset::water_normal0.png",TextureFlags.WrapST | TextureFlags.FilterMipmap ),
+			Texture.Load( "asset::water_normal1.png",TextureFlags.WrapST | TextureFlags.FilterMipmap ) )
 		
 		waterMaterial.Velocities=New Vec2f[]( 
 			New Vec2f( .01,.03 ),
@@ -58,40 +64,60 @@ Class MyWindow Extends Window
 		_water=Model.CreateBox( New Boxf( -2000,-1,-2000,2000,0,2000 ),1,1,1,waterMaterial )
 		
 		'create fog
-		_fog = New FogEffect( New Color(0.69, 0.78, 0.82, 0.7 ), 1, 1000 )
+		_fog = New FogEffect( New Color(0.69, 0.78, 0.82, 0.75 ), 1, 1000 )
 		_scene.AddPostEffect( _fog )
 		
-		'create airplane
-		_plane = Model.Load( "asset::plane.glb" )
-		_plane.Position = New Vec3f( 0, 6, 0 )
+		'create bloom
+		Local _bloom := New BloomEffect( 2 )
+		_scene.AddPostEffect( _bloom )
 		
+		'create main pivot
+		_pivot = New Model
+		
+		'create airplane
+		_plane = Model.LoadBoned( "asset::plane.glb" )
+		_plane.Animator.Animate( 0 )
+		_plane.Parent = _pivot
+		_plane.Position = New Vec3f
+
+		'create camera target
+		_camTarget = New Entity( _plane )
+'		_camTarget = Model.CreateSphere( 0.25, 12, 12, New PbrMaterial( Color.Red ) )
+		_camTarget.Parent = _plane
+		_camTarget.Position = New Vec3f( 0, 0, 10 )
+
 		'create camera
-		_camera=New Camera
+		_camera=New Camera( _pivot )
 		_camera.Near=.1
 		_camera.Far=1000
 		_camera.FOV = 60
-		_camera.Move( 0,4,-10 )
+		_camera.Move( 0,3,-12 )
 		
-		_camTarget = New Entity( _plane )
-		_camera.Parent = _camTarget
-		_camera.PointAt( New Vec3f( 0 ) )
-		
+		'Control component
+		Local control := _pivot.AddComponent<PlaneControl>()
+		control.plane = _plane
+		control.camera = _camera
+		control.target = _camTarget
+
+		_pivot.Position = New Vec3f( 0, 6, 0 )
 	End
+	
 	
 	Method OnRender( canvas:Canvas ) Override
 		RequestRender()
 		
 		_water.Position=New Vec3f( Round(_camera.Position.x/2000)*2000,0,Round(_camera.Position.z/2000)*2000 )
+
+		_camera.WorldPointAt( _camTarget.Position )
 		
-		Local delta := 60.0 / App.FPS 
-		Local dist := 15.0
-		
-		_plane.Move( 0, 0, 1.0 * delta )
-		_camTarget.Rotate( 0, 0.2 * delta, 0 )
+		_scene.Update()
 		_scene.Render( canvas,_camera )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+'		canvas.DrawText( _plane.Rotation,0,15 )
+'		canvas.DrawText( _plane.LocalRotation,0,30 )
 	End
+	
 '	
 	Method OnMeasure:Vec2i() Override
 		Return _res
@@ -104,3 +130,16 @@ Function Main()
 	New MyWindow
 	App.Run()
 End
+
+
+Class Entity Extension
+	
+	Method WorldPointAt( target:Vec3f,up:Vec3f=New Vec3f( 0,1,0 ) )
+		Local k:=(target-Position).Normalize()
+		Local i:=up.Cross( k ).Normalize()
+		Local j:=k.Cross( i )
+		Basis=New Mat3f( i,j,k )
+	End
+
+End
+
