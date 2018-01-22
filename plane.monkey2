@@ -8,7 +8,11 @@ Namespace plane
 #Import "source/PlaneControl"
 
 #Import "textures/"
-#Import "models/plane.glb"
+#Import "assets/"
+
+'#Import "render/plane_Oc.png"
+'#Import "models/plane.glb"
+
 
 Using std..
 Using mojo..
@@ -75,10 +79,21 @@ Class MyWindow Extends Window
 		_pivot = New Model
 		
 		'create airplane
-		_plane = Model.LoadBoned( "asset::plane.glb" )
+		_plane = Model.LoadBoned( "asset::plane_combined.glb" )
 		_plane.Animator.Animate( 0 )
 		_plane.Parent = _pivot
 		_plane.Position = New Vec3f
+		
+'		Local mat := Cast<PbrMaterial>( _plane.Materi )
+		Local mat := New PbrMaterial( Color.LightGrey, 0.1, 0.1, True )
+		Local tex := Texture.Load( "asset::plane_Oc.png", TextureFlags.FilterMipmap )
+		mat.OcclusionTexture = tex
+		
+		Print _plane.Materials.Length
+		Print ( _plane.Material? "true" Else "False" )
+		
+		_plane.Material = mat
+		
 
 		'create camera target
 		_camTarget = New Entity( _plane )
