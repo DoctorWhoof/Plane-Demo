@@ -4,6 +4,7 @@ Namespace plane
 #Import "<std>"
 #Import "<mojo>"
 #Import "<mojo3d>"
+'#Import "<mojo3d-loaders>"
 
 #Import "source/PlaneControl"
 
@@ -75,11 +76,20 @@ Class MyWindow Extends Window
 		_pivot = New Model
 		
 		'create airplane
-		_plane = Model.LoadBoned( "asset::plane/plane.gltf" )
-		_plane.Animator.Animate( 0 )
+		_plane = Model.LoadBoned( "asset::plane.glb" )
+'		_plane = Model.LoadBoned( "asset::plane.fbx" )
+'		_plane.Animator.Animate( 0 )
 		_plane.Parent = _pivot
 		_plane.Position = New Vec3f
 		
+'		Local mat := New PbrMaterial( Color.White )
+'		mat.ColorTexture = Texture.Load( "asset::textures/plane/plane_Plane_BaseColor.png", TextureFlags.FilterMipmap )
+'		mat.NormalTexture = Texture.Load( "asset::textures/plane/plane_Plane_Normal.png", TextureFlags.FilterMipmap )
+'		mat.MetalnessTexture = Texture.Load( "asset::textures/plane/plane_Plane_Metallic.png", TextureFlags.FilterMipmap )
+'		mat.RoughnessTexture = Texture.Load( "asset::textures/plane/plane_Plane_Roughness.png", TextureFlags.FilterMipmap )
+		
+		Local mat := PbrMaterial.Load( "asset::plane.pbr", TextureFlags.FilterMipmap )
+		_plane.AssignAllMaterials( mat )
 '		Local matrix := New AffineMat4<Float>
 '		_plane.Rotate( 0, 180, 0)
 '		_plane.Mesh.TransformVertices( matrix )
@@ -141,6 +151,28 @@ Function Main()
 	New MyWindow
 	App.Run()
 End
+
+
+Class Model Extension
+	
+	Method AssignAllMaterials( mat:Material )
+		
+		Local matArray := New Material[ Materials.Length ]
+		For Local n := 0 Until matArray.Length
+			matArray[n] = mat
+		Next
+
+		Materials = matArray
+		
+		For Local c := Eachin Children
+			Local model := Cast<Model>(c)
+			If model
+				model.AssignAllMaterials( mat )
+			End
+		Next
+	End
+	
+End	
 
 
 
