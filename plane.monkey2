@@ -7,6 +7,7 @@ Namespace plane
 '#Import "<mojo3d-loaders>"
 
 #Import "source/PlaneControl"
+#Import "source/Noise3D"
 
 #Import "textures/"
 #Import "assets/"
@@ -20,7 +21,12 @@ Class MyWindow Extends Window
 	Field _res :Vec2i
 	
 	Field _scene:Scene
-	Field _camera:Camera
+	
+	Field _camera1:Camera
+	Field _camera2:Camera
+	Field _camera3:Camera
+	Field _activeCamera:Camera
+	
 	Field _light:Light
 '	Field _fog:FogEffect
 	
@@ -33,10 +39,10 @@ Class MyWindow Extends Window
 	
 	
 	Method New()
-		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
+		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )'| WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
-		Layout = "fill"
+		Layout = "letterbox"
 		
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
@@ -76,67 +82,85 @@ Class MyWindow Extends Window
 		_pivot = New Model
 		
 		'create airplane
-		_plane = Model.LoadBoned( "asset::plane.glb" )
-'		_plane = Model.LoadBoned( "asset::plane.fbx" )
-'		_plane.Animator.Animate( 0 )
+		_plane = Model.LoadBoned( "asset::plane/plane.gltf" )
+		_plane.Animator.Animate( 0 )
 		_plane.Parent = _pivot
-		_plane.Position = New Vec3f
 		
-'		Local mat := New PbrMaterial( Color.White )
-'		mat.ColorTexture = Texture.Load( "asset::textures/plane/plane_Plane_BaseColor.png", TextureFlags.FilterMipmap )
-'		mat.NormalTexture = Texture.Load( "asset::textures/plane/plane_Plane_Normal.png", TextureFlags.FilterMipmap )
-'		mat.MetalnessTexture = Texture.Load( "asset::textures/plane/plane_Plane_Metallic.png", TextureFlags.FilterMipmap )
-'		mat.RoughnessTexture = Texture.Load( "asset::textures/plane/plane_Plane_Roughness.png", TextureFlags.FilterMipmap )
-		
+		'Replace Pbr material with textures exported from Substance Painter
 		Local mat := PbrMaterial.Load( "asset::plane.pbr", TextureFlags.FilterMipmap )
-		_plane.AssignAllMaterials( mat )
-'		Local matrix := New AffineMat4<Float>
-'		_plane.Rotate( 0, 180, 0)
-'		_plane.Mesh.TransformVertices( matrix )
-		
-'		Local mat := Cast<PbrMaterial>( _plane.Material )
-'		Local mat := New PbrMaterial( Color.LightGrey, 0.1, 0.1, True )
-'		Local tex := Texture.Load( "asset::plane_Oc.png", TextureFlags.FilterMipmap )
-'		mat.OcclusionTexture = tex
-		
-		Print _plane.Materials.Length
-		Print ( _plane.Material? "true" Else "False" )
-'		_plane.Material = mat
-		
+		_plane.AssignMaterialToHierarchy( mat )
+
 		'create camera target
 		_camTarget = New Entity( _pivot )
-'		_camTarget = Model.CreateSphere( 0.25, 12, 12, New PbrMaterial( Color.Red ) )
-'		_camTarget.Parent = _plane
-		_camTarget.Position = New Vec3f( 0, 0, -10 )
+		
+		Local camShake := _camTarget.AddComponent< Noise3D >()
+		camShake.AddCurve( Axis.X, 1.0, 0.2, SINE, 0.0 )
+		camShake.AddCurve( Axis.X, 0.1, 1.5, SMOOTH, 0.0 )
+		
+		camShake.AddCurve( Axis.Y, 0.5, 0.5, SINE, 100.0 )
+		camShake.AddCurve( Axis.Y, 0.1, 2.5, SMOOTH, 100.0 )
+		
+		camShake.AddCurve( Axis.Z, 1.0, 0.1, SINE, 200.0 )
+		camShake.AddCurve( Axis.Z, 0.1, 0.2, SMOOTH, 200.0 )
+		
+		camShake.Y = -1.0	'base value added to the curve generators. Acts like a parent transform.
+		camShake.Z = -10.0
 
 		'create camera
-		_camera=New Camera( _pivot )
-		_camera.View = Self
-		_camera.Near=.1
-		_camera.Far=10000
-		_camera.FOV = 75
-		_camera.Move( 0,3,8 )
+		_camera1=New Camera( _pivot )
+		_camera1.View = Self
+		_camera1.Near=.1
+		_camera1.Far=10000
+		_camera1.FOV = 75
+		_camera1.Move( 0,3,8 )
+		_activeCamera = _camera1
+		
+		'create camera
+		_camera2=New Camera( _pivot )
+		_camera2.View = Self
+		_camera2.Near=.1
+		_camera2.Far=10000
+		_camera2.FOV = 60
+		_camera2.Move( 0,3,-8 )
+		
+		'create camera
+		_camera3=New Camera( _pivot )
+		_camera3.View = Self
+		_camera3.Near=.1
+		_camera3.Far=10000
+		_camera3.FOV = 75
+		_camera3.Move( 8,8,8 )
 		
 		'Control component
-		Local control := _pivot.AddComponent<PlaneControl>()
+		Local control := _pivot.AddComponent< PlaneControl >()
 		control.plane = _plane
-		control.camera = _camera
+		control.camera = _camera1
 		control.target = _camTarget
 
 		_pivot.Position = New Vec3f( 0, 6, 0 )
-		
-'		Local ball := Model.CreateSphere( 2, 24, 24, New PbrMaterial( Color.Red, 0.1, 0.25 ) )
-'		ball.Move( 0, 4, 0)
 	End
 	
 	
 	Method OnRender( canvas:Canvas ) Override
 		RequestRender()
-		_water.Position=New Vec3f( Round(_camera.Position.x/2000)*2000,0,Round(_camera.Position.z/2000)*2000 )
-		_camera.PointAt( _camTarget.Position )
+		_water.Position=New Vec3f( Round(_pivot.Position.x/2000)*2000,0,Round(_pivot.Position.z/2000)*2000 )
+		
+		If Keyboard.KeyHit( Key.Key1 ) _activeCamera = _camera1
+		If Keyboard.KeyHit( Key.Key2 ) _activeCamera = _camera2
+		If Keyboard.KeyHit( Key.Key3 ) _activeCamera = _camera3
+		
+		Select _activeCamera
+			Case _camera1
+				_camera1.PointAt( _camTarget.Position )
+			Case _camera2
+				_camera2.PointAt( _plane.Position )
+			Case _camera3
+				_camera3.PointAt( _plane.Position )
+		End
+		
 		_scene.Update()
-		_camera.Render( canvas )
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS + "    Aspect=" + _camera.Aspect,0,0 )
+		_activeCamera.Render( canvas )
+		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS + "    Aspect=" + _activeCamera.Aspect,0,0 )
 	End
 	
 	
@@ -155,19 +179,21 @@ End
 
 Class Model Extension
 	
-	Method AssignAllMaterials( mat:Material )
+	Method AssignMaterialToHierarchy( mat:Material )
 		
 		Local matArray := New Material[ Materials.Length ]
 		For Local n := 0 Until matArray.Length
 			matArray[n] = mat
+			
 		Next
-
+		
+		Print ( "Replacing " + Materials.Length + " materials." )
 		Materials = matArray
 		
 		For Local c := Eachin Children
 			Local model := Cast<Model>(c)
 			If model
-				model.AssignAllMaterials( mat )
+				model.AssignMaterialToHierarchy( mat )
 			End
 		Next
 	End

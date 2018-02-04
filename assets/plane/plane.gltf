@@ -641,6 +641,7 @@
   "materials": [
     {
       "name": "Default",
+      "alphaMode": "BLEND",
       "emissiveFactor": [
         0,
         0,
@@ -1015,9 +1016,9 @@
           -0.9211012721061707,
           -0.13233229517936707
         ],
-        "alpha": 17.08188258759145,
-        "beta": 775.0510513411052,
-        "distance": 9.91364389883026
+        "alpha": 28.945327544367217,
+        "beta": 819.3280687171002,
+        "distance": 12.783761738288034
       },
       "ground": {
         "show": true
@@ -1063,8 +1064,8 @@
         "color": "#fff"
       },
       "ambientCubemapLight": {
-        "texture": "./asset/texture/Factory_Catwalk.hdr",
-        "$texture": "Factory_Catwalk",
+        "texture": "./asset/texture/pisa.hdr",
+        "$texture": "pisa",
         "$textureOptions": [
           "pisa",
           "Barce_Rooftop_C",
