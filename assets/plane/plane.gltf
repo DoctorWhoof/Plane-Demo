@@ -641,7 +641,7 @@
   "materials": [
     {
       "name": "Default",
-      "alphaMode": "BLEND",
+      "alphaMode":"BLEND",
       "emissiveFactor": [
         0,
         0,

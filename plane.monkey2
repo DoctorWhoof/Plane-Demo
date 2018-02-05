@@ -47,14 +47,16 @@ Class MyWindow Extends Window
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		_scene.EnvTexture = _scene.SkyTexture
-		_scene.FogColor = New Color(0.69, 0.78, 0.82, 0.3 )
-		_scene.FogFar = 5000
+		_scene.FogColor = New Color(1.0, 0.9, 0.8, 0.2 )
+		_scene.AmbientLight = New Color( 0.4, 0.6, 0.8, 1.0 )
+		_scene.FogFar = 10000
 		_scene.FogNear = 1
 		
 		'create light
 		_light=New Light
 		_light.Rotate( 45, 45, 0 )
 		_light.CastsShadow = True
+		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		
 		'create water material
 		Local waterMaterial:=New WaterMaterial
@@ -75,7 +77,7 @@ Class MyWindow Extends Window
 		_water=Model.CreateBox( New Boxf( -10000,-1,-10000,10000,0,10000 ),1,1,1,waterMaterial )
 		
 		'create bloom
-		Local _bloom := New BloomEffect( 2 )
+		Local _bloom := New BloomEffect
 		_scene.AddPostEffect( _bloom )
 		
 		'create main pivot
@@ -83,6 +85,7 @@ Class MyWindow Extends Window
 		
 		'create airplane
 		_plane = Model.LoadBoned( "asset::plane/plane.gltf" )
+'		_plane = Model.LoadBoned( "asset::plane.fbx" )
 		_plane.Animator.Animate( 0 )
 		_plane.Parent = _pivot
 		
@@ -112,7 +115,7 @@ Class MyWindow Extends Window
 		_camera1.Near=.1
 		_camera1.Far=10000
 		_camera1.FOV = 75
-		_camera1.Move( 0,3,8 )
+		_camera1.Move( 0,4,8 )
 		_activeCamera = _camera1
 		
 		'create camera
