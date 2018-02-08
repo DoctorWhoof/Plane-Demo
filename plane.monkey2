@@ -42,7 +42,9 @@ Class MyWindow Extends Window
 		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )'| WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
-		Layout = "letterbox"
+		Layout = "fill"
+		
+'		SetConfig( "MOJO3D_RENDERER","forward" )
 		
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
