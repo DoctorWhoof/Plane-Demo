@@ -28,7 +28,6 @@ Class MyWindow Extends Window
 	Field _activeCamera:Camera
 	
 	Field _light:Light
-'	Field _fog:FogEffect
 	
 	Field _water:Model
 	Field _plane:Model
@@ -39,12 +38,10 @@ Class MyWindow Extends Window
 	
 	
 	Method New()
-		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )'| WindowFlags.HighDPI  )
+		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
 		Layout = "fill"
-		
-'		SetConfig( "MOJO3D_RENDERER","forward" )
 		
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
@@ -111,7 +108,7 @@ Class MyWindow Extends Window
 		camShake.Y = -1.0	'base value added to the curve generators. Acts like a parent transform.
 		camShake.Z = -10.0
 
-		'create camera
+		'create camera 1
 		_camera1=New Camera( _pivot )
 		_camera1.View = Self
 		_camera1.Near=.1
@@ -120,7 +117,7 @@ Class MyWindow Extends Window
 		_camera1.Move( 0,4,8 )
 		_activeCamera = _camera1
 		
-		'create camera
+		'create camera 2
 		_camera2=New Camera( _pivot )
 		_camera2.View = Self
 		_camera2.Near=.1
@@ -128,7 +125,7 @@ Class MyWindow Extends Window
 		_camera2.FOV = 60
 		_camera2.Move( 0,3,-8 )
 		
-		'create camera
+		'create camera 3
 		_camera3=New Camera( _pivot )
 		_camera3.View = Self
 		_camera3.Near=.1
