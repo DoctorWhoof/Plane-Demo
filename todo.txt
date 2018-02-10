@@ -1,0 +1,27 @@
+
+To do list.
+
+Code:
+	- Slerp interpolation for controls
+	- User-positioned camera
+	- Loading screen + fade in
+	- Limit plane's altitude and distance from Island
+
+Assets:
+	-Finish texturing airplane
+		-Red and white patterns
+		-Decals
+		-Separate canopi material from body
+		
+	-Model and texture Island
+	
+	-Paint BG textures
+		-Horizon
+		-New Clouds
+	
+	
+	
+Done!
+
+Code:
+	- Animate control surfaces (rudder, ailerons) procedurally

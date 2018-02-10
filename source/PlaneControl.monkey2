@@ -6,7 +6,7 @@ Using useful..
 Class PlaneControl Extends Behaviour
 	
 	Field speed:= 1.0
-	Field turnRate := 0.5
+	Field turnRate := 0.25
 	Field ascentionRate := 0.1
 	
 	Field lag := 100.0
@@ -78,7 +78,7 @@ Class PlaneControl Extends Behaviour
 		plane.LocalRy = Smooth( plane.LocalRy, _yaw, lag, delta )
 		plane.LocalRz = Smooth( plane.Rz, _roll, lag, delta )
 		
-		camera.LocalRz = plane.LocalRz/2.0
+		camera.LocalRz = -plane.LocalRz/2.0
 		
 		target.LocalX = Smooth( target.LocalX, _yaw/4.0, lag, delta )
 		

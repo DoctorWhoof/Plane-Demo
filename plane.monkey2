@@ -8,9 +8,13 @@ Namespace plane
 
 #Import "source/PlaneControl"
 #Import "source/Noise3D"
+#Import "source/Airplane"
+
+#Import "extensions/Model"
 
 #Import "textures/"
 #Import "assets/"
+#Import "audio/"
 
 Using std..
 Using mojo..
@@ -30,15 +34,20 @@ Class MyWindow Extends Window
 	Field _light:Light
 	
 	Field _water:Model
-	Field _plane:Model
+	Field _plane:Airplane
 	Field _pivot:Model		'Needs to be a Model instead of Entity otherwise the plane isn't rendered!
 		
 	Field _camTarget:Entity
 	Field test:Model
 	
+	Field _channelMusic:Channel
+	Field _channelSfx0:Channel
+	
+	Field _sfxEngine:Sound
+	
 	
 	Method New()
-		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
+		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
 		Layout = "fill"
@@ -50,6 +59,14 @@ Class MyWindow Extends Window
 		_scene.AmbientLight = New Color( 0.4, 0.6, 0.8, 1.0 )
 		_scene.FogFar = 10000
 		_scene.FogNear = 1
+		
+		'Audio
+		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
+'		_channelSfx0 = Audio.PlayMusic( "asset::planeLoop_01.ogg")
+		
+		_sfxEngine = Sound.Load( "asset::planeLoop_01.ogg" )
+		_channelSfx0 = _sfxEngine.Play( True )
+		_channelSfx0.Volume = 0.5
 		
 		'create light
 		_light=New Light
@@ -82,30 +99,23 @@ Class MyWindow Extends Window
 		'create main pivot
 		_pivot = New Model
 		
-		'create airplane
-		_plane = Model.LoadBoned( "asset::plane/plane.gltf" )
-'		_plane = Model.LoadBoned( "asset::plane.fbx" )
-		_plane.Animator.Animate( 0 )
-		_plane.Parent = _pivot
-		
-		'Replace Pbr material with textures exported from Substance Painter
-		Local mat := PbrMaterial.Load( "asset::plane.pbr", TextureFlags.FilterMipmap )
-		_plane.AssignMaterialToHierarchy( mat )
+'		'create airplane
+		_plane = New Airplane( _pivot )
 
 		'create camera target
 		_camTarget = New Entity( _pivot )
 		
 		Local camShake := _camTarget.AddComponent< Noise3D >()
-		camShake.AddCurve( Axis.X, 1.0, 0.2, SINE, 0.0 )
-		camShake.AddCurve( Axis.X, 0.1, 1.5, SMOOTH, 0.0 )
+		camShake.AddCurve( Axis.X, 1.2, 0.1, SINE, 0.0 )
+		camShake.AddCurve( Axis.X, 0.1, 1.0, SMOOTH, 0.0 )
 		
-		camShake.AddCurve( Axis.Y, 0.5, 0.5, SINE, 100.0 )
-		camShake.AddCurve( Axis.Y, 0.1, 2.5, SMOOTH, 100.0 )
+		camShake.AddCurve( Axis.Y, 0.7, 0.25, SINE, 100.0 )
+		camShake.AddCurve( Axis.Y, 0.1, 1.25, SMOOTH, 100.0 )
 		
-		camShake.AddCurve( Axis.Z, 1.0, 0.1, SINE, 200.0 )
-		camShake.AddCurve( Axis.Z, 0.1, 0.2, SMOOTH, 200.0 )
+		camShake.AddCurve( Axis.Z, 1.2, 0.05, SINE, 200.0 )
+		camShake.AddCurve( Axis.Z, 0.1, 0.1, SMOOTH, 200.0 )
 		
-		camShake.Y = -1.0	'base value added to the curve generators. Acts like a parent transform.
+		camShake.Y = -3.0	'base value added to the curve generators. Acts like a parent transform.
 		camShake.Z = -10.0
 
 		'create camera 1
@@ -139,7 +149,7 @@ Class MyWindow Extends Window
 		control.camera = _camera1
 		control.target = _camTarget
 
-		_pivot.Position = New Vec3f( 0, 6, 0 )
+		_pivot.Position = New Vec3f( 0, 20, 0 )
 	End
 	
 	
@@ -160,6 +170,8 @@ Class MyWindow Extends Window
 				_camera3.PointAt( _plane.Position )
 		End
 		
+		_plane.Update()
+		
 		_scene.Update()
 		_activeCamera.Render( canvas )
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS + "    Aspect=" + _activeCamera.Aspect,0,0 )
@@ -179,28 +191,7 @@ Function Main()
 End
 
 
-Class Model Extension
-	
-	Method AssignMaterialToHierarchy( mat:Material )
-		
-		Local matArray := New Material[ Materials.Length ]
-		For Local n := 0 Until matArray.Length
-			matArray[n] = mat
-			
-		Next
-		
-		Print ( "Replacing " + Materials.Length + " materials." )
-		Materials = matArray
-		
-		For Local c := Eachin Children
-			Local model := Cast<Model>(c)
-			If model
-				model.AssignMaterialToHierarchy( mat )
-			End
-		Next
-	End
-	
-End	
+
 
 
 
