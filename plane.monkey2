@@ -6,9 +6,12 @@ Namespace plane
 #Import "<mojo3d>"
 '#Import "<mojo3d-loaders>"
 
-#Import "source/PlaneControl"
+#Import "source/VehicleControl"
 #Import "source/Noise3D"
 #Import "source/Airplane"
+#Import "source/Smooth"
+#Import "source/Echo"
+#Import "source/Util"
 
 #Import "extensions/Model"
 
@@ -19,6 +22,7 @@ Namespace plane
 Using std..
 Using mojo..
 Using mojo3d..
+Using util..
 
 Class MyWindow Extends Window
 	
@@ -26,31 +30,31 @@ Class MyWindow Extends Window
 	
 	Field _scene:Scene
 	
+	Field _camBase:Entity
+	Field _camTarget:Entity
+	
 	Field _camera1:Camera
 	Field _camera2:Camera
 	Field _camera3:Camera
 	Field _activeCamera:Camera
 	
 	Field _light:Light
-	
 	Field _water:Model
 	Field _plane:Airplane
-	Field _pivot:Model		'Needs to be a Model instead of Entity otherwise the plane isn't rendered!
-		
-	Field _camTarget:Entity
-	Field test:Model
+	Field _pivot:Entity
 	
 	Field _channelMusic:Channel
 	Field _channelSfx0:Channel
 	
 	Field _sfxEngine:Sound
 	
+	Field lastFrameTime:Int
 	
 	Method New()
-		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
+		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
-		Layout = "fill"
+		Layout = "letterbox"
 		
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
@@ -62,7 +66,6 @@ Class MyWindow Extends Window
 		
 		'Audio
 		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
-'		_channelSfx0 = Audio.PlayMusic( "asset::planeLoop_01.ogg")
 		
 		_sfxEngine = Sound.Load( "asset::planeLoop_01.ogg" )
 		_channelSfx0 = _sfxEngine.Play( True )
@@ -97,7 +100,8 @@ Class MyWindow Extends Window
 		_scene.AddPostEffect( _bloom )
 		
 		'create main pivot
-		_pivot = New Model
+		_pivot = New Entity
+		_pivot.Visible = True
 		
 '		'create airplane
 		_plane = New Airplane( _pivot )
@@ -106,25 +110,28 @@ Class MyWindow Extends Window
 		_camTarget = New Entity( _pivot )
 		
 		Local camShake := _camTarget.AddComponent< Noise3D >()
-		camShake.AddCurve( Axis.X, 1.2, 0.1, SINE, 0.0 )
+		camShake.AddCurve( Axis.X, 1.5, 0.1, SINE, 0.0 )
 		camShake.AddCurve( Axis.X, 0.1, 1.0, SMOOTH, 0.0 )
 		
-		camShake.AddCurve( Axis.Y, 0.7, 0.25, SINE, 100.0 )
+		camShake.AddCurve( Axis.Y, 1.0, 0.25, SINE, 100.0 )
 		camShake.AddCurve( Axis.Y, 0.1, 1.25, SMOOTH, 100.0 )
 		
-		camShake.AddCurve( Axis.Z, 1.2, 0.05, SINE, 200.0 )
+		camShake.AddCurve( Axis.Z, 1.5, 0.05, SINE, 200.0 )
 		camShake.AddCurve( Axis.Z, 0.1, 0.1, SMOOTH, 200.0 )
 		
 		camShake.Y = -3.0	'base value added to the curve generators. Acts like a parent transform.
 		camShake.Z = -10.0
-
+		
+		'camera base
+		_camBase = New Entity( _pivot )
+		_camBase.Move( 0,4,8 )
+		
 		'create camera 1
-		_camera1=New Camera( _pivot )
+		_camera1=New Camera( _camBase )
 		_camera1.View = Self
 		_camera1.Near=.1
 		_camera1.Far=10000
 		_camera1.FOV = 75
-		_camera1.Move( 0,4,8 )
 		_activeCamera = _camera1
 		
 		'create camera 2
@@ -144,10 +151,11 @@ Class MyWindow Extends Window
 		_camera3.Move( 8,8,8 )
 		
 		'Control component
-		Local control := _pivot.AddComponent< PlaneControl >()
-		control.plane = _plane
-		control.camera = _camera1
-		control.target = _camTarget
+		Local control := _pivot.AddComponent< VehicleControl >()
+		control.cameraBase = _camera1
+		control.cameraTarget = _camTarget		
+		control.vehicle = _plane
+
 
 		_pivot.Position = New Vec3f( 0, 20, 0 )
 	End
@@ -163,18 +171,26 @@ Class MyWindow Extends Window
 		
 		Select _activeCamera
 			Case _camera1
-				_camera1.PointAt( _camTarget.Position )
+				_camBase.PointAt( _camTarget.Position )
 			Case _camera2
 				_camera2.PointAt( _plane.Position )
 			Case _camera3
 				_camera3.PointAt( _plane.Position )
 		End
+
+		Local delta := 60.0*(Double( Microsecs()-lastFrameTime ) / Double( 1000000.0))
 		
-		_plane.Update()
+		Echo( "Width="+Width+", Height="+Height )
+		Echo( "FPS="+App.FPS )
+		Echo( "delta="+Format(delta,3) )
+		Echo( "Aspect=" + _activeCamera.Aspect )
 		
+		_plane.OnUpdate( delta )
 		_scene.Update()
 		_activeCamera.Render( canvas )
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS + "    Aspect=" + _activeCamera.Aspect,0,0 )
+		
+		DrawEcho( canvas, 10, 5, True )
+		lastFrameTime = Microsecs()
 	End
 	
 	

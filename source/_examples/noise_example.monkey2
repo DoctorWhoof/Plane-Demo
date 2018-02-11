@@ -58,10 +58,10 @@ Class GraphWindow Extends Window
 			Local pixelTime := (interval*x)+time
 
 			Local value1 := NoiseCurve( pixelTime, 100.0, curveFreq, SMOOTH )
-			Local value2 := NoiseCurve( pixelTime, 60, curveFreq*3.0, SMOOTH )
-			Local value3 := NoiseCurve( pixelTime, 20, curveFreq*9.0, SMOOTH )
+'			Local value2 := NoiseCurve( pixelTime, 60, curveFreq*3.0, SMOOTH )
+'			Local value3 := NoiseCurve( pixelTime, 20, curveFreq*9.0, SMOOTH )
 			
-			finalValue = value1 + value2' + value3
+			finalValue = value1' + value2' + value3
 			canvas.DrawLine( x-1, previousFinal + Height/2, x, finalValue + Height/2 )
 			
 			previousFinal = finalValue

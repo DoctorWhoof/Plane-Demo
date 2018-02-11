@@ -9,6 +9,7 @@ Class Model Extension
 			Local model := Cast<Model>(c)
 			If model
 				If model.Name = name
+					Print "Found model " + name
 					Return model
 				Else
 					Local recurse := model.GetChild( name )

@@ -2,10 +2,10 @@
 To do list.
 
 Code:
-	- Slerp interpolation for controls
 	- User-positioned camera
 	- Loading screen + fade in
 	- Limit plane's altitude and distance from Island
+	- Add canvas.Echo() extension
 
 Assets:
 	-Finish texturing airplane
@@ -19,9 +19,8 @@ Assets:
 		-Horizon
 		-New Clouds
 	
-	
-	
 Done!
 
 Code:
 	- Animate control surfaces (rudder, ailerons) procedurally
+	- Smooth interpolation for controls

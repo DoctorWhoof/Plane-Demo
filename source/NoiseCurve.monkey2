@@ -1,7 +1,10 @@
 Namespace plane
 
 #Import "<std>"
+#Import "Util"
+
 Using std..
+Using util
 
 Const SMOOTH := 0
 Const LINEAR := 1
@@ -12,8 +15,8 @@ Const SINE := 3
 
 Function NoiseCurve:Float( x:Float, maxValue:Float, frequency:Float = 1.0, style:Int = SMOOTH, offset:Float = 0.0 )
 	
-	Local time := (x*frequency)+offset
-	Local f := Fractional(time)
+	Local time := ( x*frequency )+offset
+	Local f := Fractional( time )
 	Local r0:Float
 	Local r1:Float
 	
@@ -35,24 +38,8 @@ Function NoiseCurve:Float( x:Float, maxValue:Float, frequency:Float = 1.0, style
 			Return r0 * maxValue
 	End
 
-	Return ( SmoothStep( r0, r1, f ) -0.5 ) * maxValue * 2.0
+	Return ( SmoothMix( r0, r1, f ) - 0.5 ) * maxValue * 2.0
 End
 
-
-Function Fractional:Float( x:Float )
-	Return ( x - Floor(x) )
-End
-
-
-Function SmoothStep:Float( value0:Float, value1:Float, x:Float )
-	x = Clamp( x, 0.0, 1.0 )
-	Local pos := x * x * (3 - 2 * x)
-	Return Mix( value0, value1, pos )
-End
-
-
-Function Mix:Float( value0:Float, value1:Float, x:Float )
-	Return ( value0 * ( 1 - x ) ) + ( value1 * x )
-End
 
 
