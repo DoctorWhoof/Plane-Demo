@@ -4,17 +4,18 @@ Namespace mojo3d
 Class VehicleControl Extends Behaviour
 	
 	Field speed:= 1.0
-	Field turnRate := 0.25
+	Field turnRate := 0.3
 	Field ascentionRate := 0.1	
-	Field lag := 150.0
+	Field lag := 100.0
 
 	Field cameraTarget:Entity			'The camera target, positioned ahead of the plane
 	Field cameraBase:Entity	
 	Field vehicle:Entity
 	
-	Field camRotationMult:= New Vec3f( 0.5 )
+	Field camRotationMult:= New Vec3f( 0.5, 0.8, 0.5 )
 	Field camPositionMult:= New Vec3f( 0.1, 0.1, 0.1 )
-	Field cameraLag := 100.0
+	Field cameraPositionLag := 25.0
+	Field cameraRotationLag := 100.0
 	
 	Private
 	Field _azimuth:Float
@@ -30,6 +31,8 @@ Class VehicleControl Extends Behaviour
 	Field _ySpeedGoal:Float
 	Field _finalTurnRate:Float
 	
+	Field n:= 0
+	
 	Public	
 	Method New( entity:Entity )	
 		Super.New( entity )
@@ -38,8 +41,12 @@ Class VehicleControl Extends Behaviour
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
+		n = 1-n
+		If n = 0 Return
+		
 		Local delta := elapsed * 60.0
 		Local entity:=Entity
+		Local previousPos := entity.Position
 		
 		Local time := ( Microsecs()/1000000.0 )
 		
@@ -72,15 +79,16 @@ Class VehicleControl Extends Behaviour
 		entity.Ry = _azimuth
 
 		If vehicle And cameraBase
-			cameraBase.LocalRx = vehicle.LocalRx * -camRotationMult.X
-			cameraBase.LocalRy = vehicle.LocalRy * camRotationMult.Y
-			cameraBase.LocalRz = vehicle.LocalRz * -camRotationMult.Z
+			cameraBase.LocalRx = Smooth( cameraBase.LocalRx, vehicle.LocalRx * -camRotationMult.X, cameraRotationLag, delta )
+			cameraBase.LocalRy = Smooth( cameraBase.LocalRy, vehicle.LocalRy * camRotationMult.Y, cameraRotationLag, delta )
+			cameraBase.LocalRz = Smooth( cameraBase.LocalRz, vehicle.LocalRz * -camRotationMult.Z, cameraRotationLag, delta )
 			
-			cameraBase.LocalX = Smooth( cameraBase.LocalX, vehicle.LocalRy * camPositionMult.X, cameraLag, delta )
-			cameraBase.LocalY = Smooth( cameraBase.LocalY, -vehicle.LocalRx * camPositionMult.Y, cameraLag, delta )
+			cameraBase.LocalX = Smooth( cameraBase.LocalX, vehicle.LocalRy * camPositionMult.X, cameraPositionLag, delta )
+			cameraBase.LocalY = Smooth( cameraBase.LocalY, -vehicle.LocalRx * camPositionMult.Y, cameraPositionLag, delta )
 		End
 		
-		Echo( "test" )
+		Local spd := ( entity.Position.Distance( previousPos ) * App.FPS ) * 3.6
+		Echo( "Speed:" + Format(spd) )
 	End
 	
 	

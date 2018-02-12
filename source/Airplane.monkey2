@@ -2,17 +2,19 @@
 Namespace mojo3d
 
 
-Class Airplane Extends Model
+Class Airplane Extends Behaviour
 	
-	Field maxRoll := 45.0
+	Field maxRoll := 30.0
 	Field maxYaw := 30.0
-	Field maxPitch := 30.0
+	Field maxPitch := 15.0
 	
 	Field maxRudder := 20.0
 	Field maxTail := 20.0
 	Field maxAileron := 20.0
 	
 	Private
+	
+	Field model:Model
 	
 	Field body:Model
 
@@ -35,9 +37,9 @@ Class Airplane Extends Model
 	
 	Field time:Float
 	
-	Field roll:= New SmoothFloat( 2.0, 40.0 )
-	Field yaw:= New SmoothFloat( 1.0, 30.0 )
-	Field pitch:= New SmoothFloat( 1.0, 40.0 )
+	Field roll:= New SmoothFloat( 1.0, 40.0 )
+	Field yaw:= New SmoothFloat( 0.5, 30.0 )
+	Field pitch:= New SmoothFloat( 0.5, 40.0 )
 	
 	Field rudderValue := New SmoothFloat( 0.25 )
 	Field tailValue := New SmoothFloat( 0.25 )
@@ -45,40 +47,48 @@ Class Airplane Extends Model
 	Field aileron_R_value := New SmoothFloat( 0.25 )
 	
 	Field finalMaxYaw:Float
+	
+	Field n:= 0
+	Field lastN := 0
 '	
 	Public
 	
-	Method New( pivot:Entity )
+	Method New( parent:Entity )
 		
-		Local children := Model.LoadBoned( "asset::plane/plane.gltf" )
-		children.Animator.Animate( 0 )
-		children.Parent = Self
-		Parent = pivot
-
-		body = GetChild( "body" )
-		canopi = GetChild( "canopi" )
-		rudder = GetChild( "rudder" )
-		aileron_L = GetChild( "aileron_L" )
-		aileron_R = GetChild( "aileron_R" )
-		tail_L = GetChild( "tail_L" )
-		tail_R = GetChild( "tail_R" )
+		Super.New( parent )
+		
+		model = Cast<Model>( Entity )
+		body = model.GetChild( "body" )
+		canopi = model.GetChild( "canopi" )
+		rudder = model.GetChild( "rudder" )
+		aileron_L = model.GetChild( "aileron_L" )
+		aileron_R = model.GetChild( "aileron_R" )
+		tail_L = model.GetChild( "tail_L" )
+		tail_R = model.GetChild( "tail_R" )
 		
 		'Replace materials
 		Local mat := PbrMaterial.Load( "asset::plane.pbr", TextureFlags.FilterMipmap )
-		AssignMaterialToHierarchy( mat )
+		body.AssignMaterialToHierarchy( mat )
 		canopi.Alpha = 0.75
 	End
 	
 	
 	
-	Method OnUpdate( delta:Double )
+	Method OnUpdate( elapsed:Float ) Override
+		
+		n = 1-n
+		If n = 0 Return
 		
 		SmoothFloat.UpdateTime()
 		
+		Local delta := 60.0*elapsed
+
+		Echo( "elapsed:" + elapsed +"   delta: " + Format(delta,5) )
+		
 		If Keyboard.KeyHit( Key.Left ) Or Keyboard.KeyHit( Key.Right ) Or Keyboard.KeyReleased( Key.Left ) Or Keyboard.KeyReleased( Key.Right )
 			
-			roll.Reset( LocalRz )
-			yaw.Reset( LocalRy )
+			roll.Reset( model.LocalRz )
+			yaw.Reset( model.LocalRy )
 			
 			rudderValue.Reset( rudder.LocalRy )
 			aileron_L_value.Reset( aileron_L.LocalRx )
@@ -88,8 +98,8 @@ Class Airplane Extends Model
 		
 		If Keyboard.KeyHit( Key.Up ) Or Keyboard.KeyHit( Key.Down ) Or Keyboard.KeyReleased( Key.Up ) Or Keyboard.KeyReleased( Key.Down )
 			
-			pitch.Reset( LocalRx )
-			yaw.Reset( LocalRy )
+			pitch.Reset( model.LocalRx )
+			yaw.Reset( model.LocalRy )
 			tailValue.Reset( tail_L.LocalRx )
 			finalMaxYaw = maxYaw
 			
@@ -144,11 +154,12 @@ Class Airplane Extends Model
 			
 		End
 		
-
+		Echo( model.Name +":" + model.LocalRx)
+		Echo( pitch.Get( delta ) )
 		
-		LocalRx = pitch.Get( delta )
-		LocalRy = yaw.Get( delta )
-		LocalRz = roll.Get( delta )
+		model.LocalRx = pitch.Get( delta )
+		model.LocalRy = yaw.Get( delta )
+		model.LocalRz = roll.Get( delta )
 		
 		rudder.LocalRy = rudderValue.Get( delta )
 		aileron_L.LocalRx = aileron_L_value.Get(delta )

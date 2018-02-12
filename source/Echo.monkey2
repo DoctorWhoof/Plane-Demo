@@ -12,6 +12,15 @@ Function Echo( text:String, color:Color = Color.White )
 End
 
 
+Function Echo( scene:Scene )
+	Echo( "Scene", Color.Grey )
+	For Local e := EachIn scene.GetRootEntities()
+		e.Echo( "|   " )
+'		Echo( "    " + e.Name, Color.Grey )
+	End
+End
+
+
 'Call this once at the end of each frame.
 Function DrawEcho( canvas:Canvas, x:Int=0, y:Int=0, drawRect:Bool = False, border:Int = 5 )
 	
@@ -39,7 +48,7 @@ Function DrawEcho( canvas:Canvas, x:Int=0, y:Int=0, drawRect:Bool = False, borde
 		canvas.Alpha = 1.0
 
 		canvas.Color = _colorStack[ n ]
-		canvas.Color = Color.White
+'		canvas.Color = Color.White
 		canvas.DrawText( text, x, y+lineY )
 		lineY += canvas.Font.Height
 	Next
@@ -47,4 +56,20 @@ Function DrawEcho( canvas:Canvas, x:Int=0, y:Int=0, drawRect:Bool = False, borde
 	canvas.PopMatrix()
 	_echoStack.Clear()
 	_colorStack.Clear()
+End
+
+
+'********************************   Extensions   ********************************
+
+Class Entity Extension
+	
+	Method Echo( tab:String )
+	
+		util.Echo( tab + Name )
+		
+		For Local c := Eachin Children
+			c.Echo( tab + ".   " )
+		Next	
+	End	
+	
 End

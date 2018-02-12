@@ -24,3 +24,4 @@ Done!
 Code:
 	- Animate control surfaces (rudder, ailerons) procedurally
 	- Smooth interpolation for controls
+	- Converted Airplane class into a Behavior

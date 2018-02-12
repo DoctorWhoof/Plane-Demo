@@ -27,7 +27,7 @@ Using util..
 Class MyWindow Extends Window
 	
 	Field _res :Vec2i
-	
+	Field _drawInfo:= True 
 	Field _scene:Scene
 	
 	Field _camBase:Entity
@@ -40,15 +40,13 @@ Class MyWindow Extends Window
 	
 	Field _light:Light
 	Field _water:Model
-	Field _plane:Airplane
+	Field _plane:Model
 	Field _pivot:Entity
 	
 	Field _channelMusic:Channel
 	Field _channelSfx0:Channel
 	
 	Field _sfxEngine:Sound
-	
-	Field lastFrameTime:Int
 	
 	Method New()
 		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
@@ -65,7 +63,7 @@ Class MyWindow Extends Window
 		_scene.FogNear = 1
 		
 		'Audio
-		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
+'		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
 		
 		_sfxEngine = Sound.Load( "asset::planeLoop_01.ogg" )
 		_channelSfx0 = _sfxEngine.Play( True )
@@ -76,6 +74,7 @@ Class MyWindow Extends Window
 		_light.Rotate( 45, 45, 0 )
 		_light.CastsShadow = True
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
+		_light.Name = "Light"
 		
 		'create water material
 		Local waterMaterial:=New WaterMaterial
@@ -94,20 +93,29 @@ Class MyWindow Extends Window
 		
 		'create water
 		_water=Model.CreateBox( New Boxf( -10000,-1,-10000,10000,0,10000 ),1,1,1,waterMaterial )
+		_water.Name = "Water"
 		
 		'create bloom
-		Local _bloom := New BloomEffect
-		_scene.AddPostEffect( _bloom )
+'		Local _bloom := New BloomEffect
+'		_scene.AddPostEffect( _bloom )
 		
 		'create main pivot
 		_pivot = New Entity
 		_pivot.Visible = True
+		_pivot.Name = "Pivot"
 		
 '		'create airplane
-		_plane = New Airplane( _pivot )
+'		_plane = New Airplane( _pivot )
+		_plane = Model.LoadBoned( "asset::plane/plane.gltf" )
+		_plane.Parent = _pivot
+		_plane.Animator.Animate( 0 )
+		_plane.Name = "Plane"
+		
+		Local planeAnim := _plane.AddComponent< Airplane >()
 
 		'create camera target
 		_camTarget = New Entity( _pivot )
+		_camTarget.Name = "CameraTarget"
 		
 		Local camShake := _camTarget.AddComponent< Noise3D >()
 		camShake.AddCurve( Axis.X, 1.5, 0.1, SINE, 0.0 )
@@ -125,6 +133,7 @@ Class MyWindow Extends Window
 		'camera base
 		_camBase = New Entity( _pivot )
 		_camBase.Move( 0,4,8 )
+		_camBase.Name = "CameraBase"
 		
 		'create camera 1
 		_camera1=New Camera( _camBase )
@@ -132,6 +141,7 @@ Class MyWindow Extends Window
 		_camera1.Near=.1
 		_camera1.Far=10000
 		_camera1.FOV = 75
+		_camera1.Name = "Camera1"
 		_activeCamera = _camera1
 		
 		'create camera 2
@@ -141,6 +151,7 @@ Class MyWindow Extends Window
 		_camera2.Far=10000
 		_camera2.FOV = 60
 		_camera2.Move( 0,3,-8 )
+		_camera2.Name = "Camera2"
 		
 		'create camera 3
 		_camera3=New Camera( _pivot )
@@ -149,13 +160,13 @@ Class MyWindow Extends Window
 		_camera3.Far=10000
 		_camera3.FOV = 75
 		_camera3.Move( 8,8,8 )
+		_camera3.Name = "Camera3"
 		
 		'Control component
 		Local control := _pivot.AddComponent< VehicleControl >()
 		control.cameraBase = _camera1
 		control.cameraTarget = _camTarget		
-		control.vehicle = _plane
-
+		control.vehicle = _plane'.GetChild( "body" )
 
 		_pivot.Position = New Vec3f( 0, 20, 0 )
 	End
@@ -169,6 +180,10 @@ Class MyWindow Extends Window
 		If Keyboard.KeyHit( Key.Key2 ) _activeCamera = _camera2
 		If Keyboard.KeyHit( Key.Key3 ) _activeCamera = _camera3
 		
+		If Keyboard.KeyHit( Key.Tab )
+			_drawInfo = Not _drawInfo
+		End
+		
 		Select _activeCamera
 			Case _camera1
 				_camBase.PointAt( _camTarget.Position )
@@ -177,20 +192,23 @@ Class MyWindow Extends Window
 			Case _camera3
 				_camera3.PointAt( _plane.Position )
 		End
-
-		Local delta := 60.0*(Double( Microsecs()-lastFrameTime ) / Double( 1000000.0))
 		
 		Echo( "Width="+Width+", Height="+Height )
 		Echo( "FPS="+App.FPS )
-		Echo( "delta="+Format(delta,3) )
 		Echo( "Aspect=" + _activeCamera.Aspect )
 		
-		_plane.OnUpdate( delta )
+		Echo( _scene )
+		
 		_scene.Update()
 		_activeCamera.Render( canvas )
 		
-		DrawEcho( canvas, 10, 5, True )
-		lastFrameTime = Microsecs()
+		If _drawInfo
+			DrawEcho( canvas, 10, 5, True )
+		Else
+			_echoStack.Clear()
+			_colorStack.Clear()	
+		End
+		
 	End
 	
 	
