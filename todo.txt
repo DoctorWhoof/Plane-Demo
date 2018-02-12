@@ -3,6 +3,7 @@ To do list.
 
 Code:
 	- User-positioned camera
+	- Better third person camera - with its own component controlled movement. Current one is weirdly floaty.
 	- Loading screen + fade in
 	- Limit plane's altitude and distance from Island
 	- Add canvas.Echo() extension

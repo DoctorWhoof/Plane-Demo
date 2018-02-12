@@ -39,7 +39,7 @@ Class Airplane Extends Behaviour
 	
 	Field roll:= New SmoothFloat( 1.0, 40.0 )
 	Field yaw:= New SmoothFloat( 0.5, 30.0 )
-	Field pitch:= New SmoothFloat( 0.5, 40.0 )
+	Field pitch:= New SmoothFloat( 0.2, 40.0 )
 	
 	Field rudderValue := New SmoothFloat( 0.25 )
 	Field tailValue := New SmoothFloat( 0.25 )
@@ -83,7 +83,7 @@ Class Airplane Extends Behaviour
 		
 		Local delta := 60.0*elapsed
 
-		Echo( "elapsed:" + elapsed +"   delta: " + Format(delta,5) )
+'		Echo( "elapsed:" + elapsed +"   delta: " + Format(delta,5) )
 		
 		If Keyboard.KeyHit( Key.Left ) Or Keyboard.KeyHit( Key.Right ) Or Keyboard.KeyReleased( Key.Left ) Or Keyboard.KeyReleased( Key.Right )
 			
@@ -153,9 +153,6 @@ Class Airplane Extends Behaviour
 			aileron_R_value.Goal = -0.0
 			
 		End
-		
-		Echo( model.Name +":" + model.LocalRx)
-		Echo( pitch.Get( delta ) )
 		
 		model.LocalRx = pitch.Get( delta )
 		model.LocalRy = yaw.Get( delta )

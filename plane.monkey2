@@ -49,10 +49,10 @@ Class MyWindow Extends Window
 	Field _sfxEngine:Sound
 	
 	Method New()
-		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
+		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
-		Layout = "letterbox"
+		Layout = "fill"
 		
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )

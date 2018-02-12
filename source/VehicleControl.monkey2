@@ -88,7 +88,7 @@ Class VehicleControl Extends Behaviour
 		End
 		
 		Local spd := ( entity.Position.Distance( previousPos ) * App.FPS ) * 3.6
-		Echo( "Speed:" + Format(spd) )
+		Echo( "Speed:" + Round(spd) + "Km/h" )
 	End
 	
 	
