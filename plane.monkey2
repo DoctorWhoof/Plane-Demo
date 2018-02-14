@@ -45,8 +45,9 @@ Class MyWindow Extends Window
 	
 	Field _channelMusic:Channel
 	Field _channelSfx0:Channel
-	
 	Field _sfxEngine:Sound
+	
+	Field _firstFrame := True
 	
 	Method New()
 		Super.New( "Toy Plane", 1280, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
@@ -57,7 +58,7 @@ Class MyWindow Extends Window
 		_scene=New Scene
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		_scene.EnvTexture = _scene.SkyTexture
-		_scene.FogColor = New Color(1.0, 0.9, 0.8, 0.2 )
+		_scene.FogColor = New Color( 1.0, 0.9, 0.8, 0.2 )
 		_scene.AmbientLight = New Color( 0.4, 0.6, 0.8, 1.0 )
 		_scene.FogFar = 10000
 		_scene.FogNear = 1
@@ -95,7 +96,7 @@ Class MyWindow Extends Window
 		_water=Model.CreateBox( New Boxf( -10000,-1,-10000,10000,0,10000 ),1,1,1,waterMaterial )
 		_water.Name = "Water"
 		
-		'create bloom
+		'Bloom - A little slow on my laptop, turning it off for now. Will make an option for it later, should be fine on desktop.
 '		Local _bloom := New BloomEffect
 '		_scene.AddPostEffect( _bloom )
 		

@@ -4,9 +4,9 @@ Namespace mojo3d
 Class VehicleControl Extends Behaviour
 	
 	Field speed:= 1.0
-	Field turnRate := 0.3
+	Field turnRate := 0.35
 	Field ascentionRate := 0.1	
-	Field lag := 100.0
+	Field lag := 50.0
 
 	Field cameraTarget:Entity			'The camera target, positioned ahead of the plane
 	Field cameraBase:Entity	
@@ -14,8 +14,8 @@ Class VehicleControl Extends Behaviour
 	
 	Field camRotationMult:= New Vec3f( 0.5, 0.8, 0.5 )
 	Field camPositionMult:= New Vec3f( 0.1, 0.1, 0.1 )
-	Field cameraPositionLag := 25.0
-	Field cameraRotationLag := 100.0
+	Field cameraPositionLag := 20.0
+	Field cameraRotationLag := 50.0
 	
 	Private
 	Field _azimuth:Float
@@ -40,9 +40,6 @@ Class VehicleControl Extends Behaviour
 	End
 	
 	Method OnUpdate( elapsed:Float ) Override
-		
-		n = 1-n
-		If n = 0 Return
 		
 		Local delta := elapsed * 60.0
 		Local entity:=Entity
@@ -87,7 +84,7 @@ Class VehicleControl Extends Behaviour
 			cameraBase.LocalY = Smooth( cameraBase.LocalY, -vehicle.LocalRx * camPositionMult.Y, cameraPositionLag, delta )
 		End
 		
-		Local spd := ( entity.Position.Distance( previousPos ) * App.FPS ) * 3.6
+		Local spd := ( entity.Position.Distance( previousPos ) * (1.0/elapsed) ) * 3.6
 		Echo( "Speed:" + Round(spd) + "Km/h" )
 	End
 	

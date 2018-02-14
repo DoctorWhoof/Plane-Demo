@@ -4,7 +4,7 @@ Namespace mojo3d
 
 Class Airplane Extends Behaviour
 	
-	Field maxRoll := 30.0
+	Field maxRoll := 45.0
 	Field maxYaw := 30.0
 	Field maxPitch := 15.0
 	
@@ -37,9 +37,9 @@ Class Airplane Extends Behaviour
 	
 	Field time:Float
 	
-	Field roll:= New SmoothFloat( 1.0, 40.0 )
-	Field yaw:= New SmoothFloat( 0.5, 30.0 )
-	Field pitch:= New SmoothFloat( 0.2, 40.0 )
+	Field roll:= New SmoothFloat( 1.5, 20.0 )
+	Field yaw:= New SmoothFloat( 0.75, 20.0 )
+	Field pitch:= New SmoothFloat( 0.5, 20.0 )
 	
 	Field rudderValue := New SmoothFloat( 0.25 )
 	Field tailValue := New SmoothFloat( 0.25 )
@@ -47,9 +47,6 @@ Class Airplane Extends Behaviour
 	Field aileron_R_value := New SmoothFloat( 0.25 )
 	
 	Field finalMaxYaw:Float
-	
-	Field n:= 0
-	Field lastN := 0
 '	
 	Public
 	
@@ -75,9 +72,6 @@ Class Airplane Extends Behaviour
 	
 	
 	Method OnUpdate( elapsed:Float ) Override
-		
-		n = 1-n
-		If n = 0 Return
 		
 		SmoothFloat.UpdateTime()
 		
