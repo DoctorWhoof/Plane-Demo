@@ -67,8 +67,8 @@ Class Airplane Extends Behaviour
 		Local mat := PbrMaterial.Load( "asset::plane.pbr", TextureFlags.FilterMipmap )
 		body.AssignMaterialToHierarchy( mat )
 		
-		Local canoMat := New PbrMaterial( New Color( 0, 0.1, 0.0 ), 0.05, 0.1 )
-		canopi.AssignMaterialToHierarchy( canoMat )
+'		Local canoMat := New PbrMaterial( New Color( 0, 0.1, 0.0 ), 0.05, 0.1 )
+'		canopi.AssignMaterialToHierarchy( canoMat )
 		canopi.Alpha = 0.4
 	End
 	

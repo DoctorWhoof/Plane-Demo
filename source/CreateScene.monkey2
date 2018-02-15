@@ -7,7 +7,7 @@ Class PlaneDemo Extension
 		_scene.SkyTexture = _assets.Get<Texture>( "skybox" )
 		_scene.EnvTexture = _scene.SkyTexture
 		_scene.FogColor = New Color( 1.0, 0.9, 0.8, 0.2 )
-		_scene.AmbientLight = New Color( 0.4, 0.6, 0.8, 1.0 )
+		_scene.AmbientLight = New Color( 0.3, 0.5, 0.65, 1.0 )
 		_scene.FogFar = 10000
 		_scene.FogNear = 1
 		
