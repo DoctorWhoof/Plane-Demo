@@ -7,6 +7,9 @@ Class VehicleControl Extends Behaviour
 	Field turnRate := 0.35
 	Field ascentionRate := 0.1	
 	Field lag := 50.0
+	
+	Field minAltitude := 12.0
+	Field maxAltitude := 80.0
 
 	Field cameraTarget:Entity			'The camera target, positioned ahead of the plane
 	Field cameraBase:Entity	
@@ -47,17 +50,21 @@ Class VehicleControl Extends Behaviour
 		
 		Local time := ( Microsecs()/1000000.0 )
 		
-		If Keyboard.KeyDown( Key.Up )
+
+		If Keyboard.KeyDown( Key.Up ) And ( entity.Position.Y > minAltitude )
 			_ySpeedGoal = -ascentionRate * 2.0
-			_finalTurnRate = turnRate * 1.5
-		Else If Keyboard.KeyDown( Key.Down )
+			_finalTurnRate = turnRate * 1.3
+		Else If Keyboard.KeyDown( Key.Down ) And ( entity.Position.Y < maxAltitude )
 			_ySpeedGoal = ascentionRate
-			_finalTurnRate = turnRate * 1.5
+			_finalTurnRate = turnRate * 1.3
 		Else
 			_ySpeedGoal = 0
 			_pitch = 0
 			_finalTurnRate = turnRate
 		Endif
+
+		
+		Echo( entity.Position.Y, Color.Yellow )
 		
 		If Keyboard.KeyDown( Key.Left )
 			_azimuthGoal += _finalTurnRate

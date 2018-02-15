@@ -4,9 +4,9 @@ To do list.
 Code:
 	- User-positioned camera
 	- Better third person camera - with its own component controlled movement. Current one is weirdly floaty.
-	- Loading screen + fade in
-	- Limit plane's altitude and distance from Island
+	- Limit distance from Island
 	- Add canvas.Echo() extension
+	- Movement based airplane pitch & yaw (aligned to movement)
 
 Assets:
 	-Finish texturing airplane
@@ -26,3 +26,5 @@ Code:
 	- Animate control surfaces (rudder, ailerons) procedurally
 	- Smooth interpolation for controls
 	- Converted Airplane class into a Behavior
+	- Loading screen + fade in
+	- Limit plane's altitude
