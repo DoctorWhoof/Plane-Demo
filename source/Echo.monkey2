@@ -49,7 +49,6 @@ Function DrawEcho( canvas:Canvas, x:Int=0, y:Int=0, rectAlpha:Float = 0.5, borde
 		canvas.Alpha = 1.0
 
 		canvas.Color = _colorStack[ n ]
-'		canvas.Color = Color.White
 		canvas.DrawText( text, x, y+lineY )
 		lineY += canvas.Font.Height
 	Next

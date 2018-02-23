@@ -52,6 +52,7 @@ Class PlaneDemo Extends Window
 
 	Field _drawInfo:= False 	
 	Field _init := False
+	Field _firstFrame := True
 	Field _res :Vec2i
 	
 	Field _fade := 0.0
@@ -89,11 +90,12 @@ Class PlaneDemo Extends Window
 		
 		'Loading screen + load assets.
 		If Not _init
-			If Not _assets.Finished
+			If _firstFrame
 				DrawLoadingScreen( canvas )
-				_assets.LoadAll()
+				_firstFrame = False
 				Return
 			End
+			_assets.LoadAll()
 			CreateScene()
 			_fadeStart = Now()
 			_init = True

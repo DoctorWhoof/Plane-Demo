@@ -82,6 +82,7 @@ Class Airplane Extends Behaviour
 
 '		Echo( "elapsed:" + elapsed +"   delta: " + Format(delta,5) )
 		
+'		#Rem
 		If Keyboard.KeyHit( Key.Left ) Or Keyboard.KeyHit( Key.Right ) Or Keyboard.KeyReleased( Key.Left ) Or Keyboard.KeyReleased( Key.Right )
 			
 			roll.Reset( model.LocalRz )
@@ -151,8 +152,8 @@ Class Airplane Extends Behaviour
 			
 		End
 		
-		model.LocalRx = pitch.Get( delta )
-		model.LocalRy = yaw.Get( delta )
+		body.LocalRx = pitch.Get( delta )
+'		model.LocalRy = yaw.Get( delta )
 		model.LocalRz = roll.Get( delta )
 		
 		rudder.LocalRy = rudderValue.Get( delta )
@@ -160,6 +161,7 @@ Class Airplane Extends Behaviour
 		aileron_R.LocalRx = aileron_R_value.Get( delta )
 		tail_L.LocalRx = tailValue.Get( delta )
 		tail_R.LocalRx = tailValue.Get( delta )
+		
 	End
 	
 	

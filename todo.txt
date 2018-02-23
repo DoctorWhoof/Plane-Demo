@@ -13,6 +13,7 @@ Assets:
 		-Red and white patterns
 		-Decals
 		-Separate canopi material from body
+	- Airplane interior
 		
 	-Model and texture Island
 	

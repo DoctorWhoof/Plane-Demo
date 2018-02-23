@@ -20,7 +20,7 @@ Class PlaneDemo Extension
 		'create light
 		_light=New Light
 		_light.Rotate( 45, 45, 0 )
-		_light.CastsShadow = True
+'		_light.CastsShadow = True
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		_light.Name = "Light"
 		
@@ -48,12 +48,6 @@ Class PlaneDemo Extension
 		_pivot = New Entity
 		_pivot.Visible = True
 		_pivot.Name = "Pivot"
-		
-		'Control component
-		Local control := _pivot.AddComponent< VehicleControl >()
-		control.cameraBase = _camera1
-		control.cameraTarget = _camTarget		
-		control.vehicle = _plane		
 
 '		'create airplane
 		_plane = _assets.Get<Model>( "plane" )
@@ -112,7 +106,13 @@ Class PlaneDemo Extension
 		_camera3.Move( 8,8,8 )
 		_camera3.Name = "Camera3"
 		
-		_pivot.Position = New Vec3f( 0, 20, 0 )	
+		_pivot.Position = New Vec3f( 0, 20, 0 )
+		
+		'Control component
+		Local control := _pivot.AddComponent< VehicleControl >()
+		control.cameraBase = _camera1
+		control.cameraTarget = _camTarget		
+		control.vehicle = _plane.GetChild( "body" )	
 	End	
 	
 	
