@@ -24,6 +24,8 @@ Class Model Extension
 	
 	Method AssignMaterialToHierarchy( mat:Material )
 		
+		If Not mat Return
+		
 		Local matArray := New Material[ Materials.Length ]
 		For Local n := 0 Until matArray.Length
 			matArray[n] = mat

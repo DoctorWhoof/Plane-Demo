@@ -6,7 +6,7 @@ Code:
 	- Better third person camera - with its own component controlled movement. Current one is weirdly floaty.
 	- Limit distance from Island
 	- Add canvas.Echo() extension
-	- Movement based airplane pitch & yaw (aligned to movement)
+	- Movement based airplane pitch & yaw (aligned to movement) (?)
 
 Assets:
 	-Finish texturing airplane
@@ -29,3 +29,4 @@ Code:
 	- Converted Airplane class into a Behavior
 	- Loading screen + fade in
 	- Limit plane's altitude
+	-Scrape assetmanager, load everything in CreateScene function at the right time

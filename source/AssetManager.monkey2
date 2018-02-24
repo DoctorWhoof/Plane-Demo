@@ -14,8 +14,10 @@ Class AssetManager
 	
 	
 	Method Get<T>:T( name:String )
-		Local a := Cast<T>( _assets[ name ].data )
-		If a Then Return a
+		If _assets[ name ]
+			Local a := Cast<T>( _assets[ name ].data )
+			If a Then Return a
+		End
 		Print "Assetmanager: Warning, asset " + name + " not found."
 		Return Null
 	End
@@ -39,8 +41,8 @@ Class AssetManager
 					a.data = Variant( Sound.Load( a.path ) )
 				Case ".pbr"
 					a.data = Variant( PbrMaterial.Load( a.path, a.flags ) )
-				Case "gltf"
-					a.data = Variant( Model.LoadBoned( a.path ) )	
+				Case "gltf", ".glb"
+					a.data = Variant( Model.LoadBoned( a.path ) )
 			End
 		End	
 	End

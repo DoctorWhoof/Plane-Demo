@@ -1,13 +1,11 @@
-
 Namespace plane
 
 #Import "<std>"
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "source/CreateScene"
+#Import "source/LoadScene"
 #Import "source/LoadingScreen"
-#Import "source/AssetManager"
 #Import "source/VehicleControl"
 #Import "source/Noise3D"
 #Import "source/Airplane"
@@ -25,13 +23,11 @@ Using std..
 Using mojo..
 Using mojo3d..
 Using util..
-Using asset
 
 Class PlaneDemo Extends Window
 	
 	Protected
-	
-	Field _assets := New AssetManager
+
 	Field _scene:Scene
 	
 	Field _camBase:Entity
@@ -72,14 +68,7 @@ Class PlaneDemo Extends Window
 		'We need to create a scene before loading any models
 		_scene=New Scene
 		
-		'Now we add the assets - but not load them yet!
-		_assets.Add( "engineSound", "asset::planeLoop_01.ogg" )
-		_assets.Add( "skybox", "asset::miramar-skybox.jpg", TextureFlags.Cubemap | TextureFlags.FilterMipmap )
-		_assets.Add( "waterTexture0", "asset::water_normal0.png", TextureFlags.WrapST | TextureFlags.FilterMipmap )
-		_assets.Add( "waterTexture1", "asset::water_normal1.png", TextureFlags.WrapST | TextureFlags.FilterMipmap )
-		_assets.Add( "plane", "asset::plane/plane.gltf" )
-		
-		'This one needs to load right now, before all other assets, since it'll be rendered before we load the others
+		'The first thing we load is the loading screen itself.
 		_loadingScreen = Image.Load( "asset::loading.png", Null, TextureFlags.FilterMipmap )
 	End
 	
@@ -95,8 +84,7 @@ Class PlaneDemo Extends Window
 				_firstFrame = False
 				Return
 			End
-			_assets.LoadAll()
-			CreateScene()
+			LoadScene()
 			_fadeStart = Now()
 			_init = True
 			Print"~nAssets Loaded...~n"
@@ -126,11 +114,9 @@ Class PlaneDemo Extends Window
 		Echo( "Width="+Width+", Height="+Height )
 		Echo( "FPS="+App.FPS )
 		Echo( "Aspect=" + Format(_activeCamera.Aspect) )
-		
 		Echo( _scene )
 		
 		_scene.Update()
-
 		_activeCamera.Render( canvas )
 		
 		If _fade < 1.0

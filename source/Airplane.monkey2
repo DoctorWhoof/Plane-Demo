@@ -62,14 +62,8 @@ Class Airplane Extends Behaviour
 		aileron_R = model.GetChild( "aileron_R" )
 		tail_L = model.GetChild( "tail_L" )
 		tail_R = model.GetChild( "tail_R" )
-		
-		'Replace materials
-		Local mat := PbrMaterial.Load( "asset::plane.pbr", TextureFlags.FilterMipmap )
-		body.AssignMaterialToHierarchy( mat )
-		
-'		Local canoMat := New PbrMaterial( New Color( 0, 0.1, 0.0 ), 0.05, 0.1 )
-'		canopi.AssignMaterialToHierarchy( canoMat )
-		canopi.Alpha = 0.4
+		propeller = model.GetChild( "propeller" )
+	
 	End
 	
 	
@@ -79,10 +73,7 @@ Class Airplane Extends Behaviour
 		SmoothFloat.UpdateTime()
 		
 		Local delta := 60.0*elapsed
-
-'		Echo( "elapsed:" + elapsed +"   delta: " + Format(delta,5) )
 		
-'		#Rem
 		If Keyboard.KeyHit( Key.Left ) Or Keyboard.KeyHit( Key.Right ) Or Keyboard.KeyReleased( Key.Left ) Or Keyboard.KeyReleased( Key.Right )
 			
 			roll.Reset( model.LocalRz )
@@ -161,6 +152,8 @@ Class Airplane Extends Behaviour
 		aileron_R.LocalRx = aileron_R_value.Get( delta )
 		tail_L.LocalRx = tailValue.Get( delta )
 		tail_R.LocalRx = tailValue.Get( delta )
+		
+		propeller.RotateZ( 396.0 )
 		
 	End
 	
