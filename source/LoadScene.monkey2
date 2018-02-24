@@ -14,7 +14,7 @@ Class PlaneDemo Extension
 		'create light
 		_light=New Light
 		_light.Rotate( 45, 45, 0 )
-'		_light.CastsShadow = True
+		_light.CastsShadow = True
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		_light.Name = "Light"
 		
@@ -57,26 +57,20 @@ Class PlaneDemo Extension
 		canopi.Alpha = 0.9
 		
 		Local planeAnim := _plane.AddComponent< Airplane >()
+		
+'		camShake.Y = -3.0	'base value added to the curve generators. Acts like a parent transform.
+'		camShake.Z = -10.0
 
-		'create camera target
-		_camTarget = New Entity( _pivot )
-		_camTarget.Name = "CameraTarget"
+		'camera rotator
+		_camOrbit = New Entity( _pivot )
+		_camOrbit.Name = "CameraOrbit"
 		
-		Local camShake := _camTarget.AddComponent< Noise3D >()
-		camShake.AddCurve( Axis.X, 1.5, 0.1, SINE, 0.0 )
-		camShake.AddCurve( Axis.X, 0.1, 1.0, SMOOTH, 0.0 )
-		
-		camShake.AddCurve( Axis.Y, 1.0, 0.25, SINE, 100.0 )
-		camShake.AddCurve( Axis.Y, 0.1, 1.25, SMOOTH, 100.0 )
-		
-		camShake.AddCurve( Axis.Z, 1.5, 0.05, SINE, 200.0 )
-		camShake.AddCurve( Axis.Z, 0.1, 0.1, SMOOTH, 200.0 )
-		
-		camShake.Y = -3.0	'base value added to the curve generators. Acts like a parent transform.
-		camShake.Z = -10.0
+		'camera pan&tilt
+		_camPan = New Entity( _camOrbit )
+		_camPan.Name = "CameraPan"
 		
 		'camera base
-		_camBase = New Entity( _pivot )
+		_camBase = New Entity( _camOrbit )
 		_camBase.Move( 0,4,8 )
 		_camBase.Name = "CameraBase"
 		
@@ -90,7 +84,7 @@ Class PlaneDemo Extension
 		_activeCamera = _camera1
 		
 		'create camera 2
-		_camera2=New Camera( _pivot )
+		_camera2=New Camera( _camOrbit )
 		_camera2.View = Self
 		_camera2.Near=.1
 		_camera2.Far=10000
@@ -98,22 +92,31 @@ Class PlaneDemo Extension
 		_camera2.Move( 0,3,-8 )
 		_camera2.Name = "Camera2"
 		
-		'create camera 3
-		_camera3=New Camera( _pivot )
-		_camera3.View = Self
-		_camera3.Near=.1
-		_camera3.Far=10000
-		_camera3.FOV = 75
-		_camera3.Move( 8,8,8 )
-		_camera3.Name = "Camera3"
-		
 		_pivot.Position = New Vec3f( 0, 20, 0 )
+		
+		'create camera target
+		_camTarget = New Entity( _camPan )
+		_camTarget.Name = "CameraTarget"
+		Local shakeMult := 2.0
+		Local camShake := _camTarget.AddComponent< Noise3D >()
+		camShake.AddCurve( Axis.X, 0.5 * shakeMult, 0.1, SINE, 0.0 )
+		camShake.AddCurve( Axis.X, 0.1 * shakeMult, 1.0, SMOOTH, 0.0 )
+		
+		camShake.AddCurve( Axis.Y, 0.5 * shakeMult, 0.25, SINE, 100.0 )
+		camShake.AddCurve( Axis.Y, 0.1 * shakeMult, 1.25, SMOOTH, 100.0 )
+		
+		camShake.AddCurve( Axis.Z, 0.25 * shakeMult, 0.05, SINE, 200.0 )
+		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.1, SMOOTH, 200.0 )
 		
 		'Control component
 		Local control := _pivot.AddComponent< VehicleControl >()
 		control.cameraBase = _camera1
 		control.cameraTarget = _camTarget		
-		control.vehicle = _plane.GetChild( "body" )	
+		control.vehicle = _plane.GetChild( "body" )
+		
+		'Camera control
+		Local camControl := _camOrbit.AddComponent< CameraControl >()
+		camControl.target = _camPan
 		
 		'Audio
 '		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")

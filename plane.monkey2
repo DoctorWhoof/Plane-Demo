@@ -7,6 +7,7 @@ Namespace plane
 #Import "source/LoadScene"
 #Import "source/LoadingScreen"
 #Import "source/VehicleControl"
+#Import "source/CameraControl"
 #Import "source/Noise3D"
 #Import "source/Airplane"
 #Import "source/Smooth"
@@ -32,9 +33,11 @@ Class PlaneDemo Extends Window
 	
 	Field _camBase:Entity
 	Field _camTarget:Entity
+	Field _camOrbit:Entity
+	Field _camPan:Entity
+	
 	Field _camera1:Camera
 	Field _camera2:Camera
-	Field _camera3:Camera
 	Field _activeCamera:Camera
 	
 	Field _light:Light
@@ -60,7 +63,7 @@ Class PlaneDemo Extends Window
 	Public
 	
 	Method New()
-		Super.New( "Flying Monkey", 1440, 720, WindowFlags.Resizable )' | WindowFlags.HighDPI  )
+		Super.New( "Flying Monkey", 1440, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
 		_res = New Vec2i( Width, Height )
 		Print _res
 		Layout = "letterbox"
@@ -96,7 +99,6 @@ Class PlaneDemo Extends Window
 		
 		If Keyboard.KeyHit( Key.Key1 ) _activeCamera = _camera1
 		If Keyboard.KeyHit( Key.Key2 ) _activeCamera = _camera2
-		If Keyboard.KeyHit( Key.Key3 ) _activeCamera = _camera3
 		
 		If Keyboard.KeyHit( Key.Tab )
 			_drawInfo = Not _drawInfo
@@ -107,8 +109,6 @@ Class PlaneDemo Extends Window
 				_camBase.PointAt( _camTarget.Position )
 			Case _camera2
 				_camera2.PointAt( _plane.Position )
-			Case _camera3
-				_camera3.PointAt( _plane.Position )
 		End
 		
 		Echo( "Width="+Width+", Height="+Height )
