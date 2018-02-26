@@ -4,7 +4,9 @@ Namespace mojo3d
 Class CameraControl Extends Behaviour
 	
 	Field speed := 1.5
+	
 	Field target:Entity
+	Field camera:Entity
 	
 	Public	
 	Method New( entity:Entity )	
@@ -20,9 +22,9 @@ Class CameraControl Extends Behaviour
 			If target
 				
 				If Keyboard.KeyDown( Key.A )
-					target.LocalX -= (speed/10.0) * delta
-				Else If Keyboard.KeyDown( Key.D )
 					target.LocalX += (speed/10.0) * delta
+				Else If Keyboard.KeyDown( Key.D )
+					target.LocalX -= (speed/10.0) * delta
 				Endif
 				
 				If Keyboard.KeyDown( Key.W )
@@ -48,9 +50,11 @@ Class CameraControl Extends Behaviour
 			Endif
 			
 			If Keyboard.KeyDown( Key.Z )
-				Entity.LocalScale -= (speed/200.0) * delta
+'				Entity.LocalScale -= (speed/200.0) * delta
+				camera.LocalZ -= (speed/10.0) * delta
 			Else If Keyboard.KeyDown( Key.X )
-				Entity.LocalScale += (speed/200.0) * delta
+				camera.LocalZ += (speed/10.0) * delta
+'				Entity.LocalScale += (speed/200.0) * delta
 			Endif
 			
 		End

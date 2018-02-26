@@ -10,6 +10,7 @@ Class PlaneDemo Extension
 		_scene.AmbientLight = New Color( 0.3, 0.5, 0.65, 1.0 )
 		_scene.FogFar = 10000
 		_scene.FogNear = 1
+		_scene.CSMSplits = New Float[]( 2.0, 4.0, 16.0, 32.0 )
 		
 		'create light
 		_light=New Light
@@ -17,6 +18,7 @@ Class PlaneDemo Extension
 		_light.CastsShadow = True
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		_light.Name = "Light"
+
 		
 		'create water material
 		Local waterMaterial:=New WaterMaterial
@@ -57,9 +59,15 @@ Class PlaneDemo Extension
 		canopi.Alpha = 0.9
 		
 		Local planeAnim := _plane.AddComponent< Airplane >()
-		
-'		camShake.Y = -3.0	'base value added to the curve generators. Acts like a parent transform.
-'		camShake.Z = -10.0
+
+		'The pilot!
+		_monkey = Model.LoadBoned( "asset::monkey.glb" )
+		_monkey.AssignMaterialToHierarchy( PbrMaterial.Load( "asset::monkey.pbr", TextureFlags.FilterMipmap ) )
+		_monkey.Parent = _plane.GetChild( "cockpit" )
+		_monkey.Name = "Monkey"
+		_monkey.Scale = New Vec3f( 1.7 )
+		_monkey.RotateX( 20 )
+		_monkey.MoveY( 0.1 )
 
 		'camera rotator
 		_camOrbit = New Entity( _pivot )
@@ -79,7 +87,7 @@ Class PlaneDemo Extension
 		_camera1.View = Self
 		_camera1.Near=.1
 		_camera1.Far=10000
-		_camera1.FOV = 75
+		_camera1.FOV = 70
 		_camera1.Name = "Camera1"
 		_activeCamera = _camera1
 		
@@ -108,18 +116,22 @@ Class PlaneDemo Extension
 		camShake.AddCurve( Axis.Z, 0.25 * shakeMult, 0.05, SINE, 200.0 )
 		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.1, SMOOTH, 200.0 )
 		
+'		camShake.Y = -3.0	'base value added to the curve generators. Acts like a parent transform.
+'		camShake.Z = -10.0
+		
 		'Control component
 		Local control := _pivot.AddComponent< VehicleControl >()
-		control.cameraBase = _camera1
-		control.cameraTarget = _camTarget		
+'		control.cameraBase = _camera1
+'		control.cameraTarget = _camTarget		
 		control.vehicle = _plane.GetChild( "body" )
 		
 		'Camera control
 		Local camControl := _camOrbit.AddComponent< CameraControl >()
 		camControl.target = _camPan
+		camControl.camera = _camBase
 		
 		'Audio
-'		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
+		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
 		_sfxEngine = Sound.Load( "asset::planeLoop_01.ogg" )
 		_channelSfx0 = _sfxEngine.Play( True )
 		_channelSfx0.Volume = 0.5

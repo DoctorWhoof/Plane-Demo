@@ -17,7 +17,7 @@ Namespace plane
 #Import "extensions/Model"
 
 #Import "textures/"
-#Import "assets/"
+#Import "models/"
 #Import "audio/"
 
 Using std..
@@ -44,6 +44,7 @@ Class PlaneDemo Extends Window
 	Field _water:Model
 	Field _plane:Model
 	Field _pivot:Entity
+	Field _monkey:Model
 	
 	Field _channelMusic:Channel
 	Field _channelSfx0:Channel
