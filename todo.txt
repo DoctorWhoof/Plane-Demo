@@ -1,32 +1,46 @@
 
 To do list.
 
+------------------------------------------------------------------------------------
+
 Code:
-	- User-positioned camera
-	- Better third person camera - with its own component controlled movement. Current one is weirdly floaty.
 	- Limit distance from Island
 	- Add canvas.Echo() extension
-	- Movement based airplane pitch & yaw (aligned to movement) (?)
+	- Camera reset
+	- First person camera
+	- Help screen (Escape key or space bar or F1) 
+	- Credits screen
+	
+	WIP
+	- User-positioned camera
+
+	- Better third person camera - with its own component controlled movement. Current one is weirdly floaty.
+		- Movement based airplane pitch & yaw (aligned to movement) (?)
+		
+------------------------------------------------------------------------------------
 
 Assets:
-	-Finish texturing airplane
-		-Red and white patterns
-		-Decals
-		-Separate canopi material from body
-	- Airplane interior
-		
-	-Model and texture Island
+	- Decals
+	- Model and texture Island
 	
-	-Paint BG textures
-		-Horizon
-		-New Clouds
-	
+	- Paint BG textures
+		- Horizon
+		- New Clouds
+
+------------------------------------------------------------------------------------
+
 Done!
 
-Code:
+	Code:
 	- Animate control surfaces (rudder, ailerons) procedurally
 	- Smooth interpolation for controls
 	- Converted Airplane class into a Behavior
 	- Loading screen + fade in
 	- Limit plane's altitude
-	-Scrape assetmanager, load everything in CreateScene function at the right time
+	- Scrape assetmanager, load everything in CreateScene function at the right time
+	
+	Assets:
+	- Finish texturing airplane
+			-Red and white patterns
+			-Separate canopi material from body (not necessary)
+	- Airplane interior

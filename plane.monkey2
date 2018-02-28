@@ -31,10 +31,11 @@ Class PlaneDemo Extends Window
 
 	Field _scene:Scene
 	
-	Field _camBase:Entity
+	Field _camDolly:Entity
 	Field _camTarget:Entity
 	Field _camOrbit:Entity
 	Field _camPan:Entity
+	Field _camNoise:Entity
 	
 	Field _camera1:Camera
 	Field _camera2:Camera
@@ -98,18 +99,18 @@ Class PlaneDemo Extends Window
 		'If _init is over and all assets are loaded, we simply update and render each frame
 		_water.Position=New Vec3f( Round(_pivot.Position.x/2000)*2000,0,Round(_pivot.Position.z/2000)*2000 )
 		
-		If Keyboard.KeyHit( Key.Key1 ) _activeCamera = _camera1
-		If Keyboard.KeyHit( Key.Key2 ) _activeCamera = _camera2
+		If Keyboard.KeyHit( Key.Key1 )
+			_activeCamera = _camera1
+			_monkey.Visible = True
+		End
+		
+		If Keyboard.KeyHit( Key.Key2 )
+			_activeCamera = _camera2
+			_monkey.Visible = False
+		End
 		
 		If Keyboard.KeyHit( Key.Tab )
 			_drawInfo = Not _drawInfo
-		End
-		
-		Select _activeCamera
-			Case _camera1
-				_camBase.PointAt( _camTarget.Position )
-			Case _camera2
-				_camera2.PointAt( _plane.Position )
 		End
 		
 		Echo( "Width="+Width+", Height="+Height )

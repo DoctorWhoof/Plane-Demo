@@ -4,60 +4,98 @@ Namespace mojo3d
 Class CameraControl Extends Behaviour
 	
 	Field speed := 1.5
+	Field minFOV := 10.0
+	Field maxFOV := 85.0
 	
-	Field target:Entity
+	Field shaker:Entity
+	Field dolly:Entity
+	Field orbiter:Entity
 	Field camera:Entity
+	
+	Private
+	Field _cam:Camera
 	
 	Public	
 	Method New( entity:Entity )	
 		Super.New( entity )
 		Print( "New Camera Control!" )
+		
+		_cam = Cast<Camera>( entity )
+		Assert( _cam, "CameraControl: Error, entity not a camera" )
 	End
 	
 	Method OnUpdate( elapsed:Float ) Override
 		Local delta := elapsed * 60.0
 		
-		If Keyboard.KeyDown( Key.LeftShift ) Or  Keyboard.KeyDown( Key.RightShift )
+		dolly.PointAt( orbiter.Position )
 		
-			If target
-				
-				If Keyboard.KeyDown( Key.A )
-					target.LocalX += (speed/10.0) * delta
-				Else If Keyboard.KeyDown( Key.D )
-					target.LocalX -= (speed/10.0) * delta
-				Endif
-				
-				If Keyboard.KeyDown( Key.W )
-					target.LocalY += (speed/10.0) * delta
-				Else If Keyboard.KeyDown( Key.S )
-					target.LocalY -= (speed/10.0) * delta
-				Endif
-				
+		If Keyboard.KeyDown( Key.LeftShift ) Or  Keyboard.KeyDown( Key.RightShift )
+
+			If Keyboard.KeyDown( Key.A )
+				Entity.Ry += (speed/2.0) * delta
+			Else If Keyboard.KeyDown( Key.D )
+				Entity.Ry -= (speed/2.0) * delta
+			Endif
+			
+			If Keyboard.KeyDown( Key.W )
+				Entity.Rx -= (speed/2.0) * delta
+			Else If Keyboard.KeyDown( Key.S )
+				Entity.Rx += (speed/2.0) * delta
+			Endif
+			
+			If Keyboard.KeyDown( Key.Z )
+				Entity.Rz += (speed/2.0) * delta
+			Else If Keyboard.KeyDown( Key.X )
+				Entity.Rz -= (speed/2.0) * delta
+			Endif
+			
+			If Keyboard.KeyHit( Key.Space )
+				Entity.LocalRotation = New Vec3f	
 			End
 
 		Else
 		
 			If Keyboard.KeyDown( Key.A )
-				Entity.LocalRy -= speed * delta
+				orbiter.LocalRy -= speed * delta
 			Else If Keyboard.KeyDown( Key.D )
-				Entity.LocalRy += speed * delta
+				orbiter.LocalRy += speed * delta
 			Endif
 			
 			If Keyboard.KeyDown( Key.W )
-				Entity.LocalRx -= speed * delta
+				orbiter.LocalRx -= speed * delta
 			Else If Keyboard.KeyDown( Key.S )
-				Entity.LocalRx += speed * delta
+				orbiter.LocalRx += speed * delta
 			Endif
 			
 			If Keyboard.KeyDown( Key.Z )
-'				Entity.LocalScale -= (speed/200.0) * delta
-				camera.LocalZ -= (speed/10.0) * delta
+				Entity.LocalZ += (speed/10.0) * delta
 			Else If Keyboard.KeyDown( Key.X )
-				camera.LocalZ += (speed/10.0) * delta
-'				Entity.LocalScale += (speed/200.0) * delta
+				Entity.LocalZ -= (speed/10.0) * delta
 			Endif
 			
+			If Keyboard.KeyHit( Key.Space )
+				Entity.LocalPosition = New Vec3f
+				orbiter.LocalRotation = New Vec3f
+			End
+			
 		End
+		
+		If( Keyboard.KeyDown( Key.Minus ) )
+			_cam.FOV += speed * delta
+		Elseif( Keyboard.KeyDown( Key.Equals ) )
+			_cam.FOV -= speed * delta
+		End
+		
+		If( Keyboard.KeyHit( Key.Enter ) )
+			If shaker
+				Local noise := shaker.GetComponent<Noise3D>()
+				If noise
+					noise.enabled = Not noise.enabled	
+				End
+			End	
+		End
+		
+		_cam.FOV = Clamp( _cam.FOV, minFOV, maxFOV )
 		
 	End
 	

@@ -6,6 +6,10 @@ Using std.geom..
 
 Class Noise3D Extends Behaviour
 	
+	Field affectRotation := True
+	Field affectPosition := False
+	Field enabled := True
+	
 	Private
 	'Baseline values.
 	Field _x:Float
@@ -76,7 +80,14 @@ Class Noise3D Extends Behaviour
 	
 	Method OnUpdate( elapsed:Float ) Override
 		_time += elapsed
-		Entity.LocalPosition = Vector
+		
+		If enabled
+			If affectPosition Then Entity.LocalPosition = Vector
+			If affectRotation Then Entity.LocalRotation = Vector
+		Else
+			If affectPosition Then Entity.LocalPosition = New Vec3f
+			If affectRotation Then Entity.LocalRotation = New Vec3f	
+		End
 	End
 	
 	
