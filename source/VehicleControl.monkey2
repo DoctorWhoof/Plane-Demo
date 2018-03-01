@@ -10,10 +10,6 @@ Class VehicleControl Extends Behaviour
 	
 	Field minAltitude := 12.0
 	Field maxAltitude := 80.0
-
-'	Field cameraTarget:Entity			'The camera target, positioned ahead of the plane
-'	Field cameraBase:Entity	
-	Field vehicle:Entity
 	
 	Field camRotationMult:= New Vec3f( 0.5, 0.8, 0.5 )
 	Field camPositionMult:= New Vec3f( 0.1, 0.1, 0.1 )
@@ -64,7 +60,7 @@ Class VehicleControl Extends Behaviour
 		Endif
 
 		
-		Echo( entity.Position.Y, Color.Yellow )
+		Echo( "Altitude:" + entity.Position.Y )
 		
 		If Keyboard.KeyDown( Key.Left )
 			_azimuthGoal += _finalTurnRate
@@ -81,15 +77,6 @@ Class VehicleControl Extends Behaviour
 		
 		_azimuth = Smooth( _azimuth, _azimuthGoal, lag, delta )
 		entity.Ry = _azimuth
-
-'		If vehicle And cameraBase
-'			cameraBase.LocalRx = Smooth( cameraBase.LocalRx, vehicle.LocalRx * -camRotationMult.X, cameraRotationLag, delta )
-'			cameraBase.LocalRy = Smooth( cameraBase.LocalRy, vehicle.LocalRy * camRotationMult.Y, cameraRotationLag, delta )
-'			cameraBase.LocalRz = Smooth( cameraBase.LocalRz, vehicle.LocalRz * -camRotationMult.Z, cameraRotationLag, delta )
-'			
-'			cameraBase.LocalX = Smooth( cameraBase.LocalX, vehicle.LocalRy * camPositionMult.X, cameraPositionLag, delta )
-'			cameraBase.LocalY = Smooth( cameraBase.LocalY, -vehicle.LocalRx * camPositionMult.Y, cameraPositionLag, delta )
-'		End
 		
 		Local spd := ( entity.Position.Distance( previousPos ) * (1.0/elapsed) ) * 3.6
 		Echo( "Speed:" + Round(spd) + "Km/h" )

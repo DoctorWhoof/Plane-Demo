@@ -4,10 +4,18 @@ Class PlaneDemo Extension
 	
 	Method LoadScene()
 		
+		'Load help screen
+		_helpScreen = Image.Load( "asset::help.png", Null, TextureFlags.FilterMipmap )
+		
+		'Setup texture as a render target
+		_textureTarget = New Image( Width, Height, TextureFlags.FilterMipmap | TextureFlags.Dynamic )
+		_textureCanvas = New Canvas( _textureTarget )
+		
+		'Setup 3D scene
 		_scene.SkyTexture = Texture.Load( "asset::miramar-skybox.jpg", TextureFlags.Cubemap | TextureFlags.FilterMipmap )
 		_scene.EnvTexture = _scene.SkyTexture
 		_scene.FogColor = New Color( 1.0, 0.9, 0.8, 0.2 )
-		_scene.AmbientLight = New Color( 0.3, 0.5, 0.65, 1.0 )
+		_scene.AmbientLight = New Color( 0.3, 0.45, 0.6, 1.0 )
 		_scene.FogFar = 10000
 		_scene.FogNear = 1
 		_scene.CSMSplits = New Float[]( 2.0, 4.0, 16.0, 32.0 )
@@ -19,7 +27,6 @@ Class PlaneDemo Extension
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		_light.Name = "Light"
 
-		
 		'create water material
 		Local waterMaterial:=New WaterMaterial
 		
@@ -45,6 +52,7 @@ Class PlaneDemo Extension
 		_pivot = New Entity
 		_pivot.Visible = True
 		_pivot.Name = "Pivot"
+		_pivot.Position = New Vec3f( 0, 20, 0 )
 
 '		'create airplane
 		_plane = Model.LoadBoned( "asset::plane.glb" )
@@ -64,7 +72,6 @@ Class PlaneDemo Extension
 		
 		'vehicleControl component
 		Local control := _pivot.AddComponent< VehicleControl >()		
-		control.vehicle = _plane.GetChild( "body" )
 
 		'The pilot!
 		_monkey = Model.LoadBoned( "asset::monkey.glb" )
@@ -81,7 +88,7 @@ Class PlaneDemo Extension
 		helmet.Name = "helmet"
 		helmet.GetChild( "helmet_glass_low").Alpha = 0.5
 
-		'camera rotator
+		'camera orbit pivot
 		_camOrbit = New Entity( _pivot )
 		_camOrbit.Name = "CameraOrbit"
 		
@@ -89,8 +96,6 @@ Class PlaneDemo Extension
 		_camDolly = New Entity( _camOrbit )
 		_camDolly.Move( 0,4,8 )
 		_camDolly.Name = "CameraDolly"
-		
-		_pivot.Position = New Vec3f( 0, 20, 0 )
 		
 		'create camera target
 		_camTarget = New Entity( _camOrbit )

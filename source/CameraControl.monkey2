@@ -4,6 +4,8 @@ Namespace mojo3d
 Class CameraControl Extends Behaviour
 	
 	Field speed := 1.5
+	
+	Field fov := 60.0
 	Field minFOV := 10.0
 	Field maxFOV := 85.0
 	
@@ -22,6 +24,8 @@ Class CameraControl Extends Behaviour
 		
 		_cam = Cast<Camera>( entity )
 		Assert( _cam, "CameraControl: Error, entity not a camera" )
+		
+		_cam.FOV = fov
 	End
 	
 	Method OnUpdate( elapsed:Float ) Override
@@ -76,6 +80,7 @@ Class CameraControl Extends Behaviour
 			If Keyboard.KeyHit( Key.Space )
 				Entity.LocalPosition = New Vec3f
 				orbiter.LocalRotation = New Vec3f
+				_cam.FOV = fov
 			End
 			
 		End

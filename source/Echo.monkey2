@@ -54,6 +54,7 @@ Function DrawEcho( canvas:Canvas, x:Int=0, y:Int=0, rectAlpha:Float = 0.5, borde
 	Next
 	
 	canvas.PopMatrix()
+	
 	_echoStack.Clear()
 	_colorStack.Clear()
 End
