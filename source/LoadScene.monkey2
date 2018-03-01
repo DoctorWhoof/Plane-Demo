@@ -56,6 +56,7 @@ Class PlaneDemo Extension
 		cockpit.AssignMaterialToHierarchy( PbrMaterial.Load( "asset::cockpit.pbr", TextureFlags.FilterMipmap ) )
 		
 		Local canopi := _plane.GetChild( "canopi" )
+		canopi.AssignMaterialToHierarchy( New PbrMaterial( New Color(0, 0.1, 0, 0.4 ), 0.05, 0.1 ) )
 		canopi.Alpha = 0.5
 		
 		'Plane animation controller
