@@ -8,8 +8,9 @@ Class PlaneDemo Extension
 		_helpScreen = Image.Load( "asset::help.png", Null, TextureFlags.FilterMipmap )
 		
 		'Setup texture as a render target
-		_textureTarget = New Image( Width, Height, TextureFlags.FilterMipmap | TextureFlags.Dynamic )
-		_textureCanvas = New Canvas( _textureTarget )
+'		_textureTarget = New Image( Width, Height, TextureFlags.FilterMipmap | TextureFlags.Dynamic )
+'		_textureCanvas = New Canvas( _textureTarget )
+		CreateImageCanvas()
 		
 		'Setup 3D scene
 		_scene.SkyTexture = Texture.Load( "asset::miramar-skybox.jpg", TextureFlags.Cubemap | TextureFlags.FilterMipmap )

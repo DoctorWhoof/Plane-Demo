@@ -53,7 +53,7 @@ Class PlaneDemo Extends Window
 	Field _drawInfo:= False 	
 	Field _init := False
 	Field _firstFrame := True
-	Field _res :Vec2i
+	Field _res :Vec2f
 	Field _showHelp := True
 	Field _sampling := 1.0
 	
@@ -66,11 +66,16 @@ Class PlaneDemo Extends Window
 	Field _textureTarget:Image
 	Field _textureCanvas:Canvas
 	
+'	Field _previousRes:Vec2i
+'	Field _originalAspect: Float
+'	Field _currentAspect: Float
+	
 	Public
 	
 	Method New()
 		Super.New( "Flying Monkey", 1440, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
-		_res = New Vec2i( Width, Height )
+		_res = New Vec2f( Width, Height )
+'		_originalAspect = _res.x / _res.y
 		Layout = "letterbox"
 		Print "Canvas size: " + _res.X + "," + _res.Y
 		
@@ -84,6 +89,7 @@ Class PlaneDemo Extends Window
 	
 	Method OnRender( canvas:Canvas ) Override
 		
+		'We want to render every time the app is updated.
 		RequestRender()
 		
 		'Loading screen + load assets. If all assets are loaded, we skip this and update and render each frame
@@ -124,23 +130,28 @@ Class PlaneDemo Extends Window
 		
 		If Keyboard.KeyHit( Key.Slash )
 			_sampling *= 2.0
-			If _sampling > 2.0 Then _sampling = 0.5
-			
-			_textureTarget = New Image( Width * _sampling, Height * _sampling, TextureFlags.Filter | TextureFlags.Dynamic )
-			_textureCanvas = New Canvas( _textureTarget )
+			If _sampling > 2.0 Then _sampling = 0.25
+			CreateImageCanvas()
 		End
 		
 		'Draw stuff
+		_scene.Update()
+		_activeCamera.Render( _textureCanvas )
+		_textureCanvas.Flush()
+		
 		canvas.Alpha = 1.0
 		canvas.Color = Color.White
 		
-		_textureCanvas.Flush()
-		canvas.DrawImage( _textureTarget, 0, Height, 0.0, 1.0/_sampling, -1.0/_sampling ) 
+		'Camera renders upside down, for some reason?
+		canvas.PushMatrix()
+		canvas.Scale( 1.0, -1.0 )
+		canvas.Translate( 0, -Height )
+		canvas.DrawImage( _textureTarget, 0, 0, 0.0, 1.0/_sampling, 1.0/_sampling )
+		canvas.PopMatrix()
 		
-		_scene.Update()
-		_activeCamera.Render( _textureCanvas )
-		
-		Echo( "Width="+Width+", Height="+Height )
+		'Debug messages and miscellaneous view options.
+		Echo( "Window Resolution: " + Frame.Width + "," + Frame.Height )
+		Echo( "Image target="+_textureTarget.Width+","+_textureTarget.Height )
 		Echo( "FPS="+App.FPS )
 		Echo( "Aspect=" + Format(_activeCamera.Aspect) )
 		Echo( _scene )
@@ -167,8 +178,17 @@ Class PlaneDemo Extends Window
 	End
 	
 	
+	'This method is called whenever the window changes size / is created. The "letterbox" layout  depends on it.
 	Method OnMeasure:Vec2i() Override
 		Return _res
+	End
+	
+	
+	Method CreateImageCanvas()
+		'Image using the shader. Uses "Dynamic" flags because it is updated on every frame.
+		_textureTarget = New Image( _res.X * _sampling, _res.Y * _sampling, TextureFlags.FilterMipmap | TextureFlags.Dynamic, Null )
+		_textureCanvas = New Canvas( _textureTarget )
+		Print ( "New Texture Canvas: " + _res )
 	End
 	
 End
