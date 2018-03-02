@@ -4,13 +4,17 @@ Class PlaneDemo Extension
 	
 	Method LoadScene()
 		
+		Local loadtime := Now()
+		
 		'Load help screen
 		_helpScreen = Image.Load( "asset::help.png", Null, TextureFlags.FilterMipmap )
 		
-		'Setup texture as a render target
-'		_textureTarget = New Image( Width, Height, TextureFlags.FilterMipmap | TextureFlags.Dynamic )
-'		_textureCanvas = New Canvas( _textureTarget )
-		CreateImageCanvas()
+		'Message fonts
+		Message.defaultFont = Font.Load( "asset::PT_Serif-Web-Regular.ttf", 48, Null, TextureFlags.FilterMipmap )
+		
+		StackedMessage.stackedFont = Font.Load( "asset::PT_Serif-Web-Regular.ttf", 24, Null, TextureFlags.FilterMipmap )
+		StackedMessage.defaultX = Width * 0.95
+		StackedMessage.defaultY = Height * 0.95
 		
 		'Setup 3D scene
 		_scene.SkyTexture = Texture.Load( "asset::miramar-skybox.jpg", TextureFlags.Cubemap | TextureFlags.FilterMipmap )
@@ -149,6 +153,14 @@ Class PlaneDemo Extension
 		_sfxEngine = Sound.Load( "asset::planeLoop_01.ogg" )
 		_channelSfx0 = _sfxEngine.Play( True )
 		_channelSfx0.Volume = 0.5
+		
+
+		New Message( "Hit Escape key for instructions...", Width/2, Height*0.2, 2.0, 4.0, 2.0, 2.0 )
+		
+		New ScreenFade( 0, 0.1, 4.0, 0.1 )
+		
+		
+		Print "Total load time was " + Format( Now() - loadtime, 2 )
 	End	
 	
 	

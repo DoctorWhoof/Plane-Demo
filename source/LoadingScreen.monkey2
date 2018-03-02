@@ -4,7 +4,7 @@ Class PlaneDemo Extension
 	
 	Method DrawLoadingScreen( canvas:Canvas )
 		
-		Print"~n Loading Assets...~n"
+		Print"~nLoading Assets...~n"
 		Local imgAspect := Float(_loadingScreen.Width) / _loadingScreen.Height
 		Local imgHeight :=  Height/6
 		Local imgWidth := imgHeight * imgAspect

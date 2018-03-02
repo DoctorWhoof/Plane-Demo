@@ -54,7 +54,8 @@ Class CameraControl Extends Behaviour
 			Endif
 			
 			If Keyboard.KeyHit( Key.Space )
-				Entity.LocalRotation = New Vec3f	
+				Entity.LocalRotation = New Vec3f
+				New StackedMessage( "Reset camera rotation" )
 			End
 
 		Else
@@ -81,6 +82,7 @@ Class CameraControl Extends Behaviour
 				Entity.LocalPosition = New Vec3f
 				orbiter.LocalRotation = New Vec3f
 				_cam.FOV = fov
+				New StackedMessage( "Reset camera translation and FOV" )
 			End
 			
 		End
@@ -95,7 +97,8 @@ Class CameraControl Extends Behaviour
 			If shaker
 				Local noise := shaker.GetComponent<Noise3D>()
 				If noise
-					noise.enabled = Not noise.enabled	
+					noise.enabled = Not noise.enabled
+					New StackedMessage( "Toggle camera shake" )
 				End
 			End	
 		End

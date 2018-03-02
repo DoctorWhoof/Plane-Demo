@@ -13,12 +13,14 @@ Namespace plane
 #Import "source/Smooth"
 #Import "source/Echo"
 #Import "source/Util"
+#Import "source/Fader"
 
 #Import "extensions/Model"
 
 #Import "textures/"
 #Import "models/"
 #Import "audio/"
+#Import "fonts/"
 
 Using std..
 Using mojo..
@@ -54,17 +56,20 @@ Class PlaneDemo Extends Window
 	Field _init := False
 	Field _firstFrame := True
 	Field _res :Vec2f
-	Field _showHelp := True
+	Field _showHelp := False
 	Field _sampling := 1.0
 	
 	Field _fade := 0.0
 	Field _fadeStart := 0.0
 	Field _fadeLength := 4.0
 	
+	Field _fadeScreen: Image
 	Field _loadingScreen :Image
 	Field _helpScreen :Image
-	Field _textureTarget:Image
-	Field _textureCanvas:Canvas
+	Field _renderTarget:Image
+	Field _renderCanvas:Canvas
+	
+	Field _messageFont:Font
 	
 '	Field _previousRes:Vec2i
 '	Field _originalAspect: Float
@@ -82,8 +87,12 @@ Class PlaneDemo Extends Window
 		'We need to create a scene before loading any models
 		_scene=New Scene
 		
+		'Setup image as a render target
+		CreateImageCanvas()
+		
 		'The first thing we load is the loading screen itself.
 		_loadingScreen = Image.Load( "asset::loading.png", Null, TextureFlags.FilterMipmap )
+		_fadeScreen = Image.Load( "asset::fader.png", Null, TextureFlags.FilterMipmap )
 	End
 	
 	
@@ -113,31 +122,36 @@ Class PlaneDemo Extends Window
 		If Keyboard.KeyHit( Key.Key1 )
 			_activeCamera = _camera1
 			_monkey.Visible = True
+			New StackedMessage( "Third person camera" )
 		End
 		
 		If Keyboard.KeyHit( Key.Key2 )
 			_activeCamera = _camera2
 			_monkey.Visible = False
+			New StackedMessage( "First person camera" )
 		End
 		
 		If Keyboard.KeyHit( Key.Tab )
 			_drawInfo = Not _drawInfo
+			New StackedMessage( "Toggle debug info")
 		End
 		
 		If Keyboard.KeyHit( Key.Escape )
 			_showHelp = Not _showHelp
+			Message.ClearAll()
 		End
 		
 		If Keyboard.KeyHit( Key.Slash )
 			_sampling *= 2.0
 			If _sampling > 2.0 Then _sampling = 0.25
+			New StackedMessage( "Render quality set to " + Format(_sampling, 2) )
 			CreateImageCanvas()
 		End
 		
 		'Draw stuff
 		_scene.Update()
-		_activeCamera.Render( _textureCanvas )
-		_textureCanvas.Flush()
+		_activeCamera.Render( _renderCanvas )
+		_renderCanvas.Flush()
 		
 		canvas.Alpha = 1.0
 		canvas.Color = Color.White
@@ -146,12 +160,12 @@ Class PlaneDemo Extends Window
 		canvas.PushMatrix()
 		canvas.Scale( 1.0, -1.0 )
 		canvas.Translate( 0, -Height )
-		canvas.DrawImage( _textureTarget, 0, 0, 0.0, 1.0/_sampling, 1.0/_sampling )
+		canvas.DrawImage( _renderTarget, 0, 0, 0.0, 1.0/_sampling, 1.0/_sampling )
 		canvas.PopMatrix()
 		
 		'Debug messages and miscellaneous view options.
 		Echo( "Window Resolution: " + Frame.Width + "," + Frame.Height )
-		Echo( "Image target="+_textureTarget.Width+","+_textureTarget.Height )
+		Echo( "Image target="+_renderTarget.Width+","+_renderTarget.Height )
 		Echo( "FPS="+App.FPS )
 		Echo( "Aspect=" + Format(_activeCamera.Aspect) )
 		Echo( _scene )
@@ -167,27 +181,21 @@ Class PlaneDemo Extends Window
 			_colorStack.Clear()	
 		End
 		
-		If _fade < 1.0
-			_fade = ( Now() - _fadeStart ) / _fadeLength
-			canvas.Color = Color.Black
-			canvas.Alpha = 1.0 - _fade
-			canvas.DrawRect( 0, 0, Width, Height )
-			_fade = Clamp( _fade, 0.0, 1.0 )
-		End
-		
+		Message.DrawAll( canvas )
 	End
 	
 	
 	'This method is called whenever the window changes size / is created. The "letterbox" layout  depends on it.
 	Method OnMeasure:Vec2i() Override
+		_res = New Vec2f( Width, Height )
 		Return _res
 	End
 	
 	
 	Method CreateImageCanvas()
-		'Image using the shader. Uses "Dynamic" flags because it is updated on every frame.
-		_textureTarget = New Image( _res.X * _sampling, _res.Y * _sampling, TextureFlags.FilterMipmap | TextureFlags.Dynamic, Null )
-		_textureCanvas = New Canvas( _textureTarget )
+		'Image uses "Dynamic" flags because it is updated on every frame.
+		_renderTarget = New Image( _res.X * _sampling, _res.Y * _sampling, TextureFlags.FilterMipmap | TextureFlags.Dynamic, Null )
+		_renderCanvas = New Canvas( _renderTarget )
 		Print ( "New Texture Canvas: " + _res )
 	End
 	

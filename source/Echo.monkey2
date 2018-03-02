@@ -65,9 +65,7 @@ End
 Class Entity Extension
 	
 	Method Echo( tab:String )
-	
 		util.Echo( tab + Name )
-		
 		For Local c := Eachin Children
 			c.Echo( tab + ".   " )
 		Next	
