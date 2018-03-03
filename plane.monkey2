@@ -16,8 +16,10 @@ Namespace plane
 #Import "source/Fader"
 
 #Import "extensions/Model"
+#Import "extensions/Canvas"
 
 #Import "textures/"
+#Import "gui/"
 #Import "models/"
 #Import "audio/"
 #Import "fonts/"
@@ -29,20 +31,17 @@ Using util..
 
 Class PlaneDemo Extends Window
 	
+	Global canvas:Canvas
+	
 	Protected
 
 	Field _scene:Scene
 	Field _light:Light
 	Field _water:Model
+
+	Field _activeCamera:Camera
 	Field _camera1:Camera
 	Field _camera2:Camera
-	
-	Field _activeCamera:Camera
-	Field _camDolly:Entity
-	Field _camTarget:Entity
-	Field _camOrbit:Entity
-	Field _camPan:Entity
-	Field _camNoise:Entity
 	
 	Field _pivot:Entity
 	Field _plane:Model
@@ -52,11 +51,12 @@ Class PlaneDemo Extends Window
 	Field _channelSfx0:Channel
 	Field _sfxEngine:Sound
 
-	Field _drawInfo:= False 	
+	Field _drawInfo:= True 	
 	Field _init := False
 	Field _firstFrame := True
 	Field _res :Vec2f
 	Field _showHelp := False
+	Field _originalAspect: Float
 	Field _sampling := 1.0
 	
 	Field _fade := 0.0
@@ -69,20 +69,13 @@ Class PlaneDemo Extends Window
 	Field _renderTarget:Image
 	Field _renderCanvas:Canvas
 	
-	Field _messageFont:Font
-	
-'	Field _previousRes:Vec2i
-'	Field _originalAspect: Float
-'	Field _currentAspect: Float
-	
 	Public
 	
 	Method New()
 		Super.New( "Flying Monkey", 1440, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
 		_res = New Vec2f( Width, Height )
-'		_originalAspect = _res.x / _res.y
+		_originalAspect = _res.x / _res.y
 		Layout = "letterbox"
-		Print "Canvas size: " + _res.X + "," + _res.Y
 		
 		'We need to create a scene before loading any models
 		_scene=New Scene
@@ -97,6 +90,9 @@ Class PlaneDemo Extends Window
 	
 	
 	Method OnRender( canvas:Canvas ) Override
+		
+		'Needed to access the Canvas.Graph() extension outside this class. Ignore it.
+		Self.canvas = canvas
 		
 		'We want to render every time the app is updated.
 		RequestRender()
@@ -181,13 +177,19 @@ Class PlaneDemo Extends Window
 			_colorStack.Clear()	
 		End
 		
-		Message.DrawAll( canvas )
+		'Draws all "fader" objects (messages, fadeIn/Out, etc.)
+		Fader.DrawAll( canvas )
+		
+		'Debug graph. It's probably doing nothing right now. Ignore it.
+'		canvas.Alpha = 1.0
+'		canvas.Color = Color.Red
+'		canvas.DrawGraph( 100 )
 	End
 	
 	
-	'This method is called whenever the window changes size / is created. The "letterbox" layout  depends on it.
+	'This method is called whenever the window changes size or is created. The "letterbox" layout  depends on it.
 	Method OnMeasure:Vec2i() Override
-		_res = New Vec2f( Width, Height )
+'		_res = New Vec2f( Frame.Width, Frame.Width / _originalAspect )
 		Return _res
 	End
 	
@@ -196,7 +198,7 @@ Class PlaneDemo Extends Window
 		'Image uses "Dynamic" flags because it is updated on every frame.
 		_renderTarget = New Image( _res.X * _sampling, _res.Y * _sampling, TextureFlags.FilterMipmap | TextureFlags.Dynamic, Null )
 		_renderCanvas = New Canvas( _renderTarget )
-		Print ( "New Texture Canvas: " + _res )
+		Print ( "New Texture Canvas: " + _renderTarget.Width + "," + _renderTarget.Height )
 	End
 	
 End

@@ -2,71 +2,111 @@
 Namespace plane
 
 Alias SmoothFloat:SmoothValue<Float>
+Alias SmoothDouble:SmoothValue<Double>
 
 Class SmoothValue<T>
 	
-	Field smoothLength :T = 0.5
-	Field inertiaLag:= 0.0
+	Field threshold :Double = 0.01
+	
+	Protected
+	Field _value:T
+	Field _goal:T
+	Field _source:T
+	
+	Field _direction:Double
+	Field _velocity:Double
+	Field _mass:Double
 
-	Private
-	Field _v:T					'Current value
+	Field _overshootMultiplier:Double = 0.7
+	Field _useEase:Bool
+	Field _easeIn:Double
 	
-	Field _v0:T = 0.0
-	Field _v1:T = 0.0
-	Field _vi:T = 0.0
-	
-	Field _t0:T = 0.0
-	Field _t1:T = 0.0
-	
-	Global _time:T = 0.0
-	Global _all := New Stack<SmoothValue<T>>
+	Field _acc:Double
+	Field _finalVel:Double
+	Field _mult:Double
 	
 	Public
+	
+	'*************************** Public properties ***************************
+		
 	Property Goal:T()
-		Return _v1
-	Setter( value:T )
-		_v1 = value
-	End
-	
-	
-	Method New( length:T, inertiaLag:Double= 0.0 )
-		_all.Add( Self )
-		Self.smoothLength = length
-		Self.inertiaLag = inertiaLag
-	End
-	
-	
-	Method Get:T( delta:Double )
-		
-		Local mult := 1.0 - Normalize( _v0, _v1, _v )
-		
-		If inertiaLag > 1.0
-			If _vi > _v1
-				_vi -= ( smoothLength * mult )
-			Elseif _vi < _v1
-				_vi += ( smoothLength * mult )
+		Return _goal
+	Setter( newGoal:T )
+		If ( newGoal > _goal + threshold ) Or ( newGoal < _goal - threshold )
+			_source = _goal
+			_goal = newGoal
+			_mult = 1.0
+			
+			Local distance := _goal - _value
+			If distance > threshold
+				_direction = 1.0
+			Elseif distance < threshold
+				_direction = -1.0
+			Else
+				_direction = 0
 			End
-			_v = Smooth( _v, _vi, inertiaLag, delta )
+		End
+	End
+	
+	'*************************** Public methods ***************************
+	
+	Method New( value:T, velocity:Double, mass:Double, easeIn:Bool )
+		_value = value
+		_velocity = velocity
+		_useEase = easeIn
+		_mass = mass
+	End
+	
+	
+	Method Get:T( elapsed:Double )
 
-'			Echo( "_v: "+Format(_v) + "    _v0: "+Format(_v0) + "    _v1: "+Format(_v1) + "    _vi: "+Format(_vi) )
+		Local distance := _goal - _value
+		Local sourceDistance := _goal - _source
+		
+		If _useEase
+			_easeIn = Pow( 1.0 - Normalize( _source, _goal, _value ), 0.1 )
+'			PlaneDemo.canvas.Graph( _easeIn )
 		Else
-			_v = SmoothMix( _v0, _v1, Normalize( _t0, _t1, _time ) )
+			_easeIn = 1.0	
+		End		
+
+		_mult = Clamp<Double>( _mult, 0.0, 8.0 )
+		_acc = ( 1.0 / _mass ) * _mult
+		
+		If _direction > 0
+			If distance > threshold
+				_finalVel += _acc * _easeIn
+				_finalVel *= _easeIn
+				If _finalVel > _velocity Then _finalVel = _velocity
+			Elseif distance < threshold
+				'Invert!
+				_mult *= _overshootMultiplier
+				_finalVel *= _overshootMultiplier/1.5
+				_finalVel -= _acc
+				_direction = -1
+'				_source = _value
+			End
+		Elseif _direction < 0
+			If distance < threshold
+				_finalVel -= _acc * _easeIn
+				_finalVel *= _easeIn
+				If _finalVel < -_velocity Then _finalVel = -_velocity
+			ElseIf distance > threshold
+				'Invert!
+				_mult *= _overshootMultiplier
+				_finalVel *= _overshootMultiplier/1.5
+				_finalVel += _acc
+				_direction = 1
+'				_source = _value
+			End
 		End
 		
-		Return _v
-	End
-	
-	
-	Method Reset( startValue:T )
-		_v0 = startValue
-		_t0 = _time
-		_t1 = _time + smoothLength
-	End
-	
-	
-	Function UpdateTime()
-		_time = Microsecs()/1000000.0
+'		Echo( "direction:" + _direction )
+'		Echo( "value:" + _value )
+'		Echo( "easein:" + easeIn )
+		
+		_value += _finalVel * elapsed
+		Return _value
 	End
 	
 End
-

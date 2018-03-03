@@ -7,15 +7,21 @@ Const one :Double = 1.0					'This is just to ensure 1.0 is a double, not float
 
 '*********************** Math functions ***********************
 
-Function DeltaMultiply:Double( value:Double, multiplier:Double, delta:Double )
-	Local attenuation := ( one - ( ( one - multiplier ) * delta ) )
-	Return( value * attenuation )
-End
+'Function DeltaMultiply:Double( value:Double, multiplier:Double, delta:Double )
+'	Local attenuation := ( one - ( ( one - multiplier ) * delta ) )
+'	Return( value * attenuation )
+'End
+'
+'
+'Function DeltaMultiply:Vec2<Double>( vec:Vec2<Double>, multiplier:Double, delta:Double )
+'	Local attenuation := ( one - ( ( one - multiplier ) * delta ) )
+'	Return( vec * attenuation )
+'End
 
-
-Function DeltaMultiply:Vec2<Double>( vec:Vec2<Double>, multiplier:Double, delta:Double )
-	Local attenuation := ( one - ( ( one - multiplier ) * delta ) )
-	Return( vec * attenuation )
+Function Normalize:Double( min:Double, max:Double, current:Double )
+	Local range :Double = max - min
+	If( range = 0 ) Return 0.0
+	Return  Clamp<Double>( ( current - min )/range, 0.0, 1.0 )
 End
 
 
@@ -31,8 +37,17 @@ End
 
 Function SmoothMix:Double( value0:Double, value1:Double, mix:Double )
 	Local range :Double = value1 - value0
+	If range < 0.000001 And range > -0.000001 Then Return 0.0
 	Local x := mix * mix * mix * ( mix * ( ( mix * 6 ) - 15 ) + 10 )
 	Return( x * range ) + value0
+End
+
+
+Function SmoothStep:Double( value0:Double, value1:Double, mix:Double )	'normalized
+	Local range :Double = value1 - value0
+	If range < 0.000001 And range > -0.000001 Then Return 0.0
+	mix = Clamp<Double>( (mix - value0) / (value1 - value0), 0.0, 1.0 )
+	Return mix * mix * mix * ( mix * ( ( mix * 6 ) - 15 ) + 10 )
 End
 
 
@@ -53,16 +68,10 @@ Function QuantizeDown:Double( number:Double, size:Double )		'Snaps to nearest lo
 	Return number
 End
 
+
 Function QuantizeUp:Double( number:Double, size:Double )		'Snaps to nearest upper value multiple of size
 	If size Then Return Ceil( number / size ) * size
 	Return number
-End
-
-
-Function Normalize:Double( min:Double, max:Double, current:Double )
-	Local range :Double = max - min
-	If( range = 0 ) Return 0.0
-	Return  Clamp<Double>( ( current - min )/range, 0.0, 1.0 )
 End
 
 

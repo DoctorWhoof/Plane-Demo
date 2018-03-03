@@ -4,13 +4,15 @@ To do list.
 ------------------------------------------------------------------------------------
 
 Code:
-	- Message system (a message stack for messages that stay on screen for a few seconds then fade).
+	- More predictable (strictly time based, framerate independent) smooth function.
+		-Almost working Yay! Still a bit buggy...resets the easeIn attenuation halfway through a movement if keyboard is hit, sometimes...
+		
 	- Limit distance from Island
 	- Add canvas.Echo() extension
 
 	WIP
 	- Better third person camera - with its own component controlled movement. Current one is weirdly floaty.
-		- Movement based airplane pitch & yaw (aligned to movement) (?)
+		? Movement based airplane pitch & yaw (aligned to world space movement)
 		
 ------------------------------------------------------------------------------------
 
@@ -38,6 +40,7 @@ Done!
 	- First person camera
 	- Help screen (Escape key or space bar or F1) 
 	- Credits screen
+	- Message system (a message stack for messages that stay on screen for a few seconds then fade).
 	
 	Assets:
 	- Finish texturing airplane

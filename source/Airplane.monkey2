@@ -37,14 +37,14 @@ Class Airplane Extends Behaviour
 	
 	Field time:Float
 	
-	Field roll:= New SmoothFloat( 1.5, 20.0 )
-	Field yaw:= New SmoothFloat( 0.75, 20.0 )
-	Field pitch:= New SmoothFloat( 0.5, 20.0 )
+	Field roll:= New SmoothDouble( 0, 2.0, 20.0, True )
+	Field yaw:= New SmoothDouble( 0, 1.0, 20.0, True )
+	Field pitch:= New SmoothDouble( 0, 2.0, 50.0, True)
 	
-	Field rudderValue := New SmoothFloat( 0.25 )
-	Field tailValue := New SmoothFloat( 0.25 )
-	Field aileron_L_value := New SmoothFloat( 0.25 )
-	Field aileron_R_value := New SmoothFloat( 0.25 )
+	Field rudderValue := New SmoothDouble( 0, 3.0, 2.0, False )
+	Field tailValue := New SmoothDouble( 0, 3.0, 2.0, False )
+	Field aileron_L_value := New SmoothDouble( 0, 3.0, 2.0, False )
+	Field aileron_R_value := New SmoothDouble( 0, 3.0, 2.0, False )
 	
 	Field finalMaxYaw:Float
 '	
@@ -70,28 +70,10 @@ Class Airplane Extends Behaviour
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
-		SmoothFloat.UpdateTime()
-		
 		Local delta := 60.0*elapsed
 		
-		If Keyboard.KeyHit( Key.Left ) Or Keyboard.KeyHit( Key.Right ) Or Keyboard.KeyReleased( Key.Left ) Or Keyboard.KeyReleased( Key.Right )
-			
-			roll.Reset( model.LocalRz )
-			yaw.Reset( model.LocalRy )
-			
-			rudderValue.Reset( rudder.LocalRy )
-			aileron_L_value.Reset( aileron_L.LocalRx )
-			aileron_R_value.Reset( aileron_R.LocalRx )
-			
-		End
-		
 		If Keyboard.KeyHit( Key.Up ) Or Keyboard.KeyHit( Key.Down ) Or Keyboard.KeyReleased( Key.Up ) Or Keyboard.KeyReleased( Key.Down )
-			
-			pitch.Reset( model.LocalRx )
-			yaw.Reset( model.LocalRy )
-			tailValue.Reset( tail_L.LocalRx )
 			finalMaxYaw = maxYaw
-			
 		End
 		
 		If Keyboard.KeyDown( Key.Up )
@@ -143,10 +125,9 @@ Class Airplane Extends Behaviour
 			
 		End
 		
-		body.LocalRx = pitch.Get( delta )
-'		model.LocalRy = yaw.Get( delta )
+
 		model.LocalRz = roll.Get( delta )
-		
+		body.LocalRx = pitch.Get( delta )
 		rudder.LocalRy = rudderValue.Get( delta )
 		aileron_L.LocalRx = aileron_L_value.Get(delta )
 		aileron_R.LocalRx = aileron_R_value.Get( delta )

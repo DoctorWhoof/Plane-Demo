@@ -4,6 +4,8 @@ Namespace util
 Using mojo..
 Using std..
 
+'Fader objects can fade in and out of the screen with user determined timing. 
+
 Class Fader
 	
 	Field color:Color
@@ -85,6 +87,7 @@ Class Message Extends Fader
 	End
 	
 	Protected
+	'allows extended classes to use their own constructors, while staying protected so it can't be called "from outside"
 	Method New()
 	End
 	
@@ -131,19 +134,37 @@ Class StackedMessage Extends Message
 			Self.font = stackedFont	
 		End
 		
-		For Local m := Eachin all
+		Local height:Int
+		Local offset:Int
+		
+		If font
+			height = font.Height
+		Elseif stackedFont
+			height = stackedFont.Height
+		Elseif defaultFont
+			height = defaultFont.Height
+		End
+
+		Local  lowest:StackedMessage 
+
+		'makes all other messages dimmer and moves them higher according to offset
+		For Local m := Eachin all.Backwards()
 			Local sm := Cast<StackedMessage>( m )
 			If sm
-				If font
-					sm.y -= font.Height * 1.5
-				Elseif stackedFont
-					sm.y -= stackedFont.Height * 1.5
-				Elseif defaultFont
-					sm.y -= defaultFont.Height * 1.5
+				If Not lowest
+					lowest = sm
+					'checks if lowest message is too low, adjusts offset value
+					If lowest.y > y-height
+						offset = lowest.y - (y-height)
+					Else
+						offset = 0	
+					End
 				End
-				sm.alphaMult *= 0.5
+				sm.y -= offset
+				sm.alphaMult *= 0.75
 			End	
 		End
+		
 		Fader.all.Add( Self )
 	End	
 	

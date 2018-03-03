@@ -94,20 +94,16 @@ Class PlaneDemo Extension
 		helmet.GetChild( "helmet_glass_low").Alpha = 0.5
 
 		'camera orbit pivot
-		_camOrbit = New Entity( _pivot )
+		Local _camOrbit := New Entity( _pivot )
 		_camOrbit.Name = "CameraOrbit"
 		
 		'camera dolly
-		_camDolly = New Entity( _camOrbit )
+		Local _camDolly := New Entity( _camOrbit )
 		_camDolly.Move( 0,4,8 )
 		_camDolly.Name = "CameraDolly"
 		
-		'create camera target
-		_camTarget = New Entity( _camOrbit )
-		_camTarget.Name = "CameraTarget"
-		
 		'Camera noise
-		_camNoise = New Entity( _camDolly )
+		Local _camNoise := New Entity( _camDolly )
 		_camNoise.Name = "CamNoise"
 		
 		Local camShake := _camNoise.AddComponent< Noise3D >()
@@ -123,8 +119,12 @@ Class PlaneDemo Extension
 		camShake.AddCurve( Axis.Z, 0.25 * shakeMult, 0.05 * freqMult, SINE, 200.0 )
 		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.1 * freqMult, SMOOTH, 200.0 )
 		
+		'create camera "look ahead"
+		Local _camLooker := New Entity( _camNoise )
+		_camLooker.Name = "CameraLooker"
+		
 		'create camera 1
-		_camera1=New Camera( _camNoise )
+		_camera1=New Camera( _camLooker )
 		_camera1.View = Self
 		_camera1.Near=.1
 		_camera1.Far=10000
@@ -147,6 +147,7 @@ Class PlaneDemo Extension
 		camControl.shaker = _camNoise
 		camControl.dolly = _camDolly
 		camControl.orbiter = _camOrbit
+		camControl.lookAhead = _camLooker
 		
 		'Audio
 '		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
@@ -159,8 +160,7 @@ Class PlaneDemo Extension
 		
 		New ScreenFade( 0, 0.1, 4.0, 0.1 )
 		
-		
-		Print "Total load time was " + Format( Now() - loadtime, 2 )
+		Print "~nTotal load time was " + Format( Now() - loadtime, 2 )
 	End	
 	
 	

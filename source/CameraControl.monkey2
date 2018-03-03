@@ -3,16 +3,26 @@ Namespace mojo3d
 
 Class CameraControl Extends Behaviour
 	
-	Field speed := 1.5
+	Field speed := 1.0
 	
 	Field fov := 60.0
 	Field minFOV := 10.0
 	Field maxFOV := 85.0
 	
+	'"Look ahead" adjusts
+	Field maxPanAdjust := 10.0
+	Field maxTiltAdjust := 10.0
+	Field maxRollAdjust := 30.0
+	Field adjustLag := 100.0
+	
+	Field smoothPan := New SmoothDouble( 0.0, 4.0, 5.0, False )
+	Field smoothTilt := New SmoothDouble( 0.0, 4.0, 5.0, False )
+	Field smoothRoll := New SmoothDouble( 0.0, 8.0, 1.0, False )
+	
 	Field shaker:Entity
 	Field dolly:Entity
 	Field orbiter:Entity
-	Field camera:Entity
+	Field lookAhead:Entity
 	
 	Private
 	Field _cam:Camera
@@ -29,6 +39,7 @@ Class CameraControl Extends Behaviour
 	End
 	
 	Method OnUpdate( elapsed:Float ) Override
+		
 		Local delta := elapsed * 60.0
 		
 		dolly.PointAt( orbiter.Position )
@@ -84,6 +95,36 @@ Class CameraControl Extends Behaviour
 				_cam.FOV = fov
 				New StackedMessage( "Reset camera translation and FOV" )
 			End
+			
+		End
+		
+		'Look ahead: camera pans, tilts and rolls reacting to user input
+		If lookAhead
+			
+			If Keyboard.KeyDown( Key.Left )
+				smoothPan.Goal = maxPanAdjust
+				smoothRoll.Goal = maxRollAdjust
+			Else If Keyboard.KeyDown( Key.Right )
+				smoothPan.Goal = -maxPanAdjust
+				smoothRoll.Goal = -maxRollAdjust
+			Else
+				smoothPan.Goal = 0.0
+				smoothRoll.Goal = 0.0
+				
+				'Only do tilt adjusts if no pan is happening
+				If Keyboard.KeyDown( Key.Up )
+					smoothTilt.Goal = maxTiltAdjust
+				Else If Keyboard.KeyDown( Key.Down )
+					smoothTilt.Goal = -maxTiltAdjust
+				Else
+					smoothTilt.Goal = 0.0
+				Endif
+				
+			Endif
+			
+			lookAhead.LocalRx = smoothTilt.Get( elapsed )
+			lookAhead.LocalRy = smoothPan.Get( elapsed )
+			lookAhead.LocalRz = smoothRoll.Get( elapsed )
 			
 		End
 		
