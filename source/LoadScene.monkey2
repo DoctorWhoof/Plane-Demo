@@ -10,6 +10,8 @@ Class PlaneDemo Extension
 		_helpScreen = Image.Load( "asset::help.png", Null, TextureFlags.FilterMipmap )
 		
 		'Message fonts
+		Echo.font = Font.Load( "font::DejaVuSans.ttf", 14 )
+		
 		Message.defaultFont = Font.Load( "asset::PT_Serif-Web-Regular.ttf", 48, Null, TextureFlags.FilterMipmap )
 		
 		StackedMessage.stackedFont = Font.Load( "asset::PT_Serif-Web-Regular.ttf", 24, Null, TextureFlags.FilterMipmap )
@@ -110,14 +112,14 @@ Class PlaneDemo Extension
 		Local shakeMult := 5.0
 		Local freqMult := 2.5
 		
-		camShake.AddCurve( Axis.X, 0.5 * shakeMult, 0.1 * freqMult, SINE, 0.0 )
+'		camShake.AddCurve( Axis.X, 0.5 * shakeMult, 0.1 * freqMult, SINE, 0.0 )
 		camShake.AddCurve( Axis.X, 0.1 * shakeMult, 1.0 * freqMult, SMOOTH, 0.0 )
 		
-		camShake.AddCurve( Axis.Y, 0.5 * shakeMult, 0.25 * freqMult, SINE, 100.0 )
+'		camShake.AddCurve( Axis.Y, 0.5 * shakeMult, 0.25 * freqMult, SINE, 100.0 )
 		camShake.AddCurve( Axis.Y, 0.1 * shakeMult, 1.25 * freqMult, SMOOTH, 100.0 )
 		
-		camShake.AddCurve( Axis.Z, 0.25 * shakeMult, 0.05 * freqMult, SINE, 200.0 )
-		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.1 * freqMult, SMOOTH, 200.0 )
+'		camShake.AddCurve( Axis.Z, 0.25 * shakeMult, 0.05 * freqMult, SINE, 200.0 )
+		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.5 * freqMult, SMOOTH, 200.0 )
 		
 		'create camera "look ahead"
 		Local _camLooker := New Entity( _camNoise )

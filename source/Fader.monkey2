@@ -1,12 +1,13 @@
 Namespace util
 
 #Import "<mojo>"
+#Import "<std>"
 Using mojo..
 Using std..
 
 'Fader objects can fade in and out of the screen with user determined timing. 
 
-Class Fader
+Class Fader Abstract
 	
 	Field color:Color
 	Field fadeIn:Float
@@ -17,22 +18,41 @@ Class Fader
 	Field startTime:Double
 	Field alpha:Float = 0.0
 	Field alphaMult:Float = 1.0
+	Field remove:= False
 	
 	Global all:= New Stack<Fader>
 
 	Public
+	
+	'************************************* Public static functions *************************************
+	
 	Function DrawAll( canvas:Canvas )
 		For Local m := Eachin all
 			m.Update()
 			m.Draw( canvas )
-		Next	
+		Next
+		
+		'Safely delete
+		Local iter:=all.All()
+		While Not iter.AtEnd
+			Local value:=iter.Current
+			If value.remove
+				iter.Erase ()
+			Else
+				iter.Bump ()
+			Endif
+		End
+		
 	End
 	
 	Function ClearAll()
 		all.Clear()
 	End
 	
+	'************************************* Protected methods *************************************
+	
 	Protected
+	
 	Method Update()
 		If Now() > startTime
 			Local time := Now() - startTime
@@ -44,7 +64,7 @@ Class Fader
 			Elseif time < fadeIn + length + fadeOut
 				alpha = 1.0- ( ( time - (fadeIn + length ) ) / fadeOut )
 			Else
-				all.Remove( Self )
+				remove = True
 			End
 			
 			alpha *= alphaMult
@@ -148,7 +168,7 @@ Class StackedMessage Extends Message
 		Local  lowest:StackedMessage 
 
 		'makes all other messages dimmer and moves them higher according to offset
-		For Local m := Eachin all.Backwards()
+		For Local m := Eachin Fader.all.Backwards()
 			Local sm := Cast<StackedMessage>( m )
 			If sm
 				If Not lowest

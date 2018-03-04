@@ -70,7 +70,8 @@ Class Airplane Extends Behaviour
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
-		Local delta := 60.0*elapsed
+'		Local delta := 60.0*elapsed
+		Local delta := SmoothDelta( elapsed )
 		
 		If Keyboard.KeyHit( Key.Up ) Or Keyboard.KeyHit( Key.Down ) Or Keyboard.KeyReleased( Key.Up ) Or Keyboard.KeyReleased( Key.Down )
 			finalMaxYaw = maxYaw
@@ -136,6 +137,7 @@ Class Airplane Extends Behaviour
 		
 		propeller.RotateZ( 396.0 )
 		
+		Graph.Add( "Roll", model.LocalRz, Color.Pine )
 	End
 	
 	

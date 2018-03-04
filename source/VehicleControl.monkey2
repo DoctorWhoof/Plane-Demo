@@ -40,6 +40,8 @@ Class VehicleControl Extends Behaviour
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
+		elapsed = SmoothElapsed( elapsed )
+		
 		Local delta := elapsed * 60.0
 		Local entity:=Entity
 		Local previousPos := entity.Position
@@ -60,7 +62,7 @@ Class VehicleControl Extends Behaviour
 		Endif
 
 		
-		Echo( "Altitude:" + entity.Position.Y )
+		Echo.Add( "Altitude:" + entity.Position.Y )
 		
 		If Keyboard.KeyDown( Key.Left )
 			_azimuthGoal += _finalTurnRate
@@ -79,7 +81,7 @@ Class VehicleControl Extends Behaviour
 		entity.Ry = _azimuth
 		
 		Local spd := ( entity.Position.Distance( previousPos ) * (1.0/elapsed) ) * 3.6
-		Echo( "Speed:" + Round(spd) + "Km/h" )
+		Echo.Add( "Speed:" + Round(spd) + "Km/h" )
 	End
 	
 	

@@ -79,6 +79,8 @@ Class Noise3D Extends Behaviour
 	
 	
 	Method OnUpdate( elapsed:Float ) Override
+		
+		elapsed = SmoothElapsed( elapsed )
 		_time += elapsed
 		
 		If enabled
@@ -88,6 +90,11 @@ Class Noise3D Extends Behaviour
 			If affectPosition Then Entity.LocalPosition = New Vec3f
 			If affectRotation Then Entity.LocalRotation = New Vec3f	
 		End
+		
+'		Graph.Add( "Noise Rx", Entity.LocalRx, Color.Red )
+'		Graph.Add( "Noise Ry", Entity.LocalRy, Color.Green )
+'		Graph.Add( "Noise Rz", Entity.LocalRz, Color.Blue )
+		
 	End
 	
 	

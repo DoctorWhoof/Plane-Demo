@@ -1,71 +1,92 @@
 Namespace util
 
+#Import "<mojo>"
+#Import "<std>"
+Using mojo..
+Using std..
 
-Global _echoStack:= New StringStack
-Global _colorStack:= New Stack<Color>
-
-
-'Use this to add text to the Echo Display
-Function Echo( text:String, color:Color = Color.White )
-	_echoStack.Push( text )
-	_colorStack.Push( color )
-End
-
-
-'This will echo the entire scene hierarchy, recursively
-Function Echo( scene:Scene )
-	Echo( "Scene", Color.LightGrey )
-	For Local e := EachIn scene.GetRootEntities()
-		e.Echo( ".   " )
-	End
-End
-
-
-'Call this once at the end of each frame.
-Function DrawEcho( canvas:Canvas, x:Int=0, y:Int=0, rectAlpha:Float = 0.5, border:Int = 5 )
+Class Echo
 	
-	canvas.PushMatrix()
-	Local lineY := 2
-	Local maxWidth := 0
+	Global font:Font
+
+	Private
 	
-	'Figure out dimensions
-	For Local n := 0 Until _echoStack.Length
-		local text := _echoStack[ n ]
-		Local size := canvas.Font.TextWidth( text )
-		If( size > maxWidth ) maxWidth = size
-	Next
+	Global _textStack:= New StringStack
+	Global _colorStack:= New Stack<Color>
 	
-	'Draw rect
-	If rectAlpha > 0.01
-		canvas.Alpha = rectAlpha
-		canvas.Color = New Color( 0, 0, 0 )
-		canvas.DrawRect( x-border, y+lineY-border, maxWidth+border+border, (canvas.Font.Height*_echoStack.Length)+border+border )
+	Public
+	
+	'************************************* Public static functions *************************************
+	
+	'Use this to add text to the Echo Display
+	Function Add( text:String, color:Color = Color.White )
+		_textStack.Push( text )
+		_colorStack.Push( color )
 	End
 	
-	'Draw text
-	For Local n := 0 Until _echoStack.Length
-		local text := _echoStack[ n ]
-		canvas.BlendMode = BlendMode.Alpha
-		canvas.Alpha = 1.0
-
-		canvas.Color = _colorStack[ n ]
-		canvas.DrawText( text, x, y+lineY )
-		lineY += canvas.Font.Height
-	Next
 	
-	canvas.PopMatrix()
+	'This will echo the entire mojo3d scene hierarchy, recursively
+	Function Add( scene:Scene )
+		Add( "Scene", Color.LightGrey )
+		For Local e := EachIn scene.GetRootEntities()
+			e.Echo( ".   " )
+		End
+	End
 	
-	_echoStack.Clear()
-	_colorStack.Clear()
+	'Draws all echo messages
+	Function Draw( canvas:Canvas, x:Int=0, y:Int=0, rectAlpha:Float = 0.5, border:Int = 5 )
+		
+		If font Then canvas.Font = font
+		
+		canvas.PushMatrix()
+		Local lineY := 2
+		Local maxWidth := 0
+		
+		'Figure out dimensions
+		For Local n := 0 Until _textStack.Length
+			local text := _textStack[ n ]
+			Local size := canvas.Font.TextWidth( text )
+			If( size > maxWidth ) maxWidth = size
+		Next
+		
+		'Draw rect
+		If rectAlpha > 0.01
+			canvas.Alpha = rectAlpha
+			canvas.Color = New Color( 0, 0, 0 )
+			canvas.DrawRect( x-border, y+lineY-border, maxWidth+border+border, (canvas.Font.Height*_textStack.Length)+border+border )
+		End
+		
+		'Draw text
+		For Local n := 0 Until _textStack.Length
+			local text := _textStack[ n ]
+			canvas.BlendMode = BlendMode.Alpha
+			canvas.Alpha = 1.0
+	
+			canvas.Color = _colorStack[ n ]
+			canvas.DrawText( text, x, y+lineY )
+			lineY += canvas.Font.Height
+		Next
+		
+		canvas.PopMatrix()
+		
+		Clear()	
+	End
+	
+	'Clears stacks. MUST BE CALLED when not drawing the current messages or the stacks will grow until they explode.
+	Function Clear()
+		_textStack.Clear()
+		_colorStack.Clear()
+	End
+	
+	
 End
-
 
 '********************************   Extensions   ********************************
 
 Class Entity Extension
 	
 	Method Echo( tab:String )
-		util.Echo( tab + Name )
+		util.Echo.Add( tab + Name )
 		For Local c := Eachin Children
 			c.Echo( tab + ".   " )
 		Next	

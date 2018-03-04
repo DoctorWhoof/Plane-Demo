@@ -33,7 +33,7 @@ Class SmoothValue<T>
 		Return _goal
 	Setter( newGoal:T )
 		If ( newGoal > _goal + threshold ) Or ( newGoal < _goal - threshold )
-			_source = _goal
+			_source = _value
 			_goal = newGoal
 			_mult = 1.0
 			
@@ -65,7 +65,7 @@ Class SmoothValue<T>
 		
 		If _useEase
 			_easeIn = Pow( 1.0 - Normalize( _source, _goal, _value ), 0.1 )
-'			PlaneDemo.canvas.Graph( _easeIn )
+'			Graph.Add( "EaseIn", _easeIn, Color.White )
 		Else
 			_easeIn = 1.0	
 		End		

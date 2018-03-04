@@ -14,6 +14,8 @@ Namespace plane
 #Import "source/Echo"
 #Import "source/Util"
 #Import "source/Fader"
+#Import "source/SmoothDelta"
+#Import "source/Graph"
 
 #Import "extensions/Model"
 #Import "extensions/Canvas"
@@ -30,8 +32,6 @@ Using mojo3d..
 Using util..
 
 Class PlaneDemo Extends Window
-	
-	Global canvas:Canvas
 	
 	Protected
 
@@ -51,7 +51,8 @@ Class PlaneDemo Extends Window
 	Field _channelSfx0:Channel
 	Field _sfxEngine:Sound
 
-	Field _drawInfo:= True 	
+	Field _drawInfo:= False 
+	Field _drawGraph:= False 	
 	Field _init := False
 	Field _firstFrame := True
 	Field _res :Vec2f
@@ -86,13 +87,15 @@ Class PlaneDemo Extends Window
 		'The first thing we load is the loading screen itself.
 		_loadingScreen = Image.Load( "asset::loading.png", Null, TextureFlags.FilterMipmap )
 		_fadeScreen = Image.Load( "asset::fader.png", Null, TextureFlags.FilterMipmap )
+		
+		
+		Local test:= 1/Double(2)
+		Print Typeof( test )
+		
 	End
 	
 	
 	Method OnRender( canvas:Canvas ) Override
-		
-		'Needed to access the Canvas.Graph() extension outside this class. Ignore it.
-		Self.canvas = canvas
 		
 		'We want to render every time the app is updated.
 		RequestRender()
@@ -132,6 +135,11 @@ Class PlaneDemo Extends Window
 			New StackedMessage( "Toggle debug info")
 		End
 		
+		If Keyboard.KeyHit( Key.G )
+			_drawGraph = Not _drawGraph
+			New StackedMessage( "Toggle debug graph")
+		End
+		
 		If Keyboard.KeyHit( Key.Escape )
 			_showHelp = Not _showHelp
 			Message.ClearAll()
@@ -160,30 +168,31 @@ Class PlaneDemo Extends Window
 		canvas.PopMatrix()
 		
 		'Debug messages and miscellaneous view options.
-		Echo( "Window Resolution: " + Frame.Width + "," + Frame.Height )
-		Echo( "Image target="+_renderTarget.Width+","+_renderTarget.Height )
-		Echo( "FPS="+App.FPS )
-		Echo( "Aspect=" + Format(_activeCamera.Aspect) )
-		Echo( _scene )
+		Echo.Add( "Window Resolution: " + Frame.Width + "," + Frame.Height )
+		Echo.Add( "Image target="+_renderTarget.Width+","+_renderTarget.Height )
+		Echo.Add( "FPS="+App.FPS, Color.Green )
+		Echo.Add( "Aspect=" + Format(_activeCamera.Aspect) )
+		Echo.Add( "Pivot Ry:" + _pivot.Ry, Color.Yellow )
+		Echo.Add( _scene )
 		
+		'Miscellaneous helpers
 		If _showHelp
 			canvas.DrawRect(0, 0, Width, Height, _helpScreen )
 		End
 		
 		If _drawInfo And Not _showHelp
-			DrawEcho( canvas, 10, 8, 0.75 )
+			Echo.Draw( canvas, 10, 8, 0.75 )
 		Else
-			_echoStack.Clear()
-			_colorStack.Clear()	
+			Echo.Clear()
+		End
+		
+		If _drawGraph And Not _drawInfo And Not _showHelp
+			Graph.DrawAll( canvas, Height * 0.3, 45 )
 		End
 		
 		'Draws all "fader" objects (messages, fadeIn/Out, etc.)
 		Fader.DrawAll( canvas )
 		
-		'Debug graph. It's probably doing nothing right now. Ignore it.
-'		canvas.Alpha = 1.0
-'		canvas.Color = Color.Red
-'		canvas.DrawGraph( 100 )
 	End
 	
 	

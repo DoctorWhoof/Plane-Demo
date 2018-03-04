@@ -40,7 +40,7 @@ Class CameraControl Extends Behaviour
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
-		Local delta := elapsed * 60.0
+		Local delta := SmoothDelta( elapsed )
 		
 		dolly.PointAt( orbiter.Position )
 		
@@ -125,6 +125,10 @@ Class CameraControl Extends Behaviour
 			lookAhead.LocalRx = smoothTilt.Get( elapsed )
 			lookAhead.LocalRy = smoothPan.Get( elapsed )
 			lookAhead.LocalRz = smoothRoll.Get( elapsed )
+			
+'			Graph.Add( "Camera Rx", lookAhead.LocalRx, Color.Red )
+'			Graph.Add( "Camera Ry", lookAhead.LocalRy, Color.Green )
+'			Graph.Add( "Camera Rz", lookAhead.LocalRz, Color.Blue )
 			
 		End
 		

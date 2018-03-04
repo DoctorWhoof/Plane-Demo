@@ -37,7 +37,7 @@ End
 
 Function SmoothMix:Double( value0:Double, value1:Double, mix:Double )
 	Local range :Double = value1 - value0
-	If range < 0.000001 And range > -0.000001 Then Return 0.0
+	If range < 0.000001 And range > -0.000001 Then Return value0
 	Local x := mix * mix * mix * ( mix * ( ( mix * 6 ) - 15 ) + 10 )
 	Return( x * range ) + value0
 End
