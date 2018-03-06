@@ -4,7 +4,6 @@ To do list.
 ------------------------------------------------------------------------------------
 
 Code:
-	- Aspect ratio independent help screen
 	- Make graphs framerate independent (x axis should scale with lower frame rates to ensure 60 pixels = 1 second, or similar)
 	- Limit distance from Island
 
@@ -41,6 +40,7 @@ Done!
 	- Message system (a message stack for messages that stay on screen for a few seconds then fade).
 	- More predictable (strictly time based, framerate independent) smooth function.
 		-Almost working Yay! Still a bit buggy...resets the easeIn attenuation halfway through a movement if keyboard is hit, sometimes...
+	- Aspect ratio independent help screen
 	
 	Assets:
 	- Finish texturing airplane

@@ -6,17 +6,22 @@ Class PlaneDemo Extension
 		
 		Local loadtime := Now()
 		
-		'Load help screen
-		_helpScreen = Image.Load( "asset::help.png", Null, TextureFlags.FilterMipmap )
-		
+		'Main fonts
+		_fontRegular = Font.Load( "asset::Merriweather-Regular.ttf", Height/16, Null, TextureFlags.FilterMipmap )
+		_fontItalic = Font.Load( "asset::Merriweather-Italic.ttf", Height/16, Null, TextureFlags.FilterMipmap )
+		_fontLight = Font.Load( "asset::Merriweather-LightItalic.ttf", Height/14, Null, TextureFlags.FilterMipmap )
+		_fontBig = Font.Load( "asset::Merriweather-Regular.ttf", Height/8, Null, TextureFlags.FilterMipmap )
+		_fontMedium = Font.Load( "asset::Merriweather-Regular.ttf", Height/12, Null, TextureFlags.FilterMipmap )
+
 		'Message fonts
 		Echo.font = Font.Load( "font::DejaVuSans.ttf", 14 )
-		
-		Message.defaultFont = Font.Load( "asset::PT_Serif-Web-Regular.ttf", 48, Null, TextureFlags.FilterMipmap )
-		
-		StackedMessage.stackedFont = Font.Load( "asset::PT_Serif-Web-Regular.ttf", 24, Null, TextureFlags.FilterMipmap )
+		Message.defaultFont = _fontBig
+		StackedMessage.stackedFont = _fontRegular
 		StackedMessage.defaultX = Width * 0.95
 		StackedMessage.defaultY = Height * 0.95
+		
+		'help screen
+		CreateHelpScreen()
 		
 		'Setup 3D scene
 		_scene.SkyTexture = Texture.Load( "asset::miramar-skybox.jpg", TextureFlags.Cubemap | TextureFlags.FilterMipmap )
@@ -112,13 +117,13 @@ Class PlaneDemo Extension
 		Local shakeMult := 5.0
 		Local freqMult := 2.5
 		
-'		camShake.AddCurve( Axis.X, 0.5 * shakeMult, 0.1 * freqMult, SINE, 0.0 )
+		camShake.AddCurve( Axis.X, 0.3 * shakeMult, 0.1 * freqMult, SINE, 0.0 )
 		camShake.AddCurve( Axis.X, 0.1 * shakeMult, 1.0 * freqMult, SMOOTH, 0.0 )
 		
-'		camShake.AddCurve( Axis.Y, 0.5 * shakeMult, 0.25 * freqMult, SINE, 100.0 )
+		camShake.AddCurve( Axis.Y, 0.3 * shakeMult, 0.25 * freqMult, SINE, 100.0 )
 		camShake.AddCurve( Axis.Y, 0.1 * shakeMult, 1.25 * freqMult, SMOOTH, 100.0 )
 		
-'		camShake.AddCurve( Axis.Z, 0.25 * shakeMult, 0.05 * freqMult, SINE, 200.0 )
+		camShake.AddCurve( Axis.Z, 0.2 * shakeMult, 0.05 * freqMult, SINE, 200.0 )
 		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.5 * freqMult, SMOOTH, 200.0 )
 		
 		'create camera "look ahead"

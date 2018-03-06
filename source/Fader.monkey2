@@ -87,6 +87,7 @@ Class Message Extends Fader
 	Field handle:Vec2f
 	Field x:Float
 	Field y:Float
+	Field scale:= 0.5
 	
 	Field speed:= New Vec2f( 0.0 )
 	
@@ -123,7 +124,10 @@ Class Message Extends Fader
 		
 		canvas.Color = color
 		canvas.Alpha = alpha
-		canvas.DrawText( text, x, y, handle.X, handle.Y )
+		canvas.PushMatrix()
+		canvas.Scale( scale, scale )
+		canvas.DrawText( text, x/scale, y/scale, handle.X, handle.Y )
+		canvas.PopMatrix()
 	End
 	
 End
@@ -175,7 +179,7 @@ Class StackedMessage Extends Message
 					lowest = sm
 					'checks if lowest message is too low, adjusts offset value
 					If lowest.y > y-height
-						offset = lowest.y - (y-height)
+						offset = ( lowest.y - (y-height) ) * scale
 					Else
 						offset = 0	
 					End

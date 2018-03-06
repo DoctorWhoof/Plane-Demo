@@ -16,6 +16,8 @@ Namespace plane
 #Import "source/Fader"
 #Import "source/SmoothDelta"
 #Import "source/Graph"
+#Import "source/Paragraph"
+#Import "source/DrawHelpScreen"
 
 #Import "extensions/Model"
 #Import "extensions/Canvas"
@@ -64,20 +66,36 @@ Class PlaneDemo Extends Window
 	Field _fadeStart := 0.0
 	Field _fadeLength := 4.0
 	
-	Field _fadeScreen: Image
 	Field _loadingScreen :Image
-	Field _helpScreen :Image
 	Field _renderTarget:Image
 	Field _renderCanvas:Canvas
+	
+	Field _helpScreen :Image
+'	Field _helpStyle1:TextStyle
+
+	Field _fontBig:Font
+	Field _fontRegular:Font
+	Field _fontItalic:Font
+	Field _fontLight:Font
+	Field _fontMedium:Font
+	
+	Field _helpText1:Paragraph
+	Field _helpText2:Paragraph
+	Field _helpText3:Paragraph
+	Field _helpText4:Paragraph
+	Field _helpText5:Paragraph
 	
 	Public
 	
 	Method New()
-		Super.New( "Flying Monkey", 1440, 720, WindowFlags.Resizable | WindowFlags.HighDPI  )
+		Super.New( "Flying Monkey", 1440, 810, WindowFlags.Resizable | WindowFlags.HighDPI  )
 		_res = New Vec2f( Width, Height )
 		_originalAspect = _res.x / _res.y
 		Layout = "letterbox"
-		
+	End
+	
+	
+	Method OnCreateWindow() Override
 		'We need to create a scene before loading any models
 		_scene=New Scene
 		
@@ -86,12 +104,6 @@ Class PlaneDemo Extends Window
 		
 		'The first thing we load is the loading screen itself.
 		_loadingScreen = Image.Load( "asset::loading.png", Null, TextureFlags.FilterMipmap )
-		_fadeScreen = Image.Load( "asset::fader.png", Null, TextureFlags.FilterMipmap )
-		
-		
-		Local test:= 1/Double(2)
-		Print Typeof( test )
-		
 	End
 	
 	
@@ -177,7 +189,7 @@ Class PlaneDemo Extends Window
 		
 		'Miscellaneous helpers
 		If _showHelp
-			canvas.DrawRect(0, 0, Width, Height, _helpScreen )
+			DrawHelpScreen( canvas )
 		End
 		
 		If _drawInfo And Not _showHelp
@@ -192,7 +204,7 @@ Class PlaneDemo Extends Window
 		
 		'Draws all "fader" objects (messages, fadeIn/Out, etc.)
 		Fader.DrawAll( canvas )
-		
+	
 	End
 	
 	
