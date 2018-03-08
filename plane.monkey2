@@ -22,7 +22,12 @@ Namespace plane
 #Import "extensions/Model"
 #Import "extensions/Canvas"
 
-#Import "textures/"
+#If __DESKTOP_TARGET__
+	#Import "textures/"
+#Else
+	#Import "texturesLowRes/"
+#End
+
 #Import "gui/"
 #Import "models/"
 #Import "audio/"
@@ -88,7 +93,7 @@ Class PlaneDemo Extends Window
 	Public
 	
 	Method New()
-		Super.New( "Flying Monkey", 1440, 810, WindowFlags.Resizable | WindowFlags.HighDPI  )
+		Super.New( "Flying Monkey", 1280, 720, WindowFlags.Resizable )
 		_res = New Vec2f( Width, Height )
 		_originalAspect = _res.x / _res.y
 		Layout = "letterbox"

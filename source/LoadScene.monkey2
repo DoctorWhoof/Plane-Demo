@@ -34,7 +34,7 @@ Class PlaneDemo Extension
 		
 		'create light
 		_light=New Light
-		_light.Rotate( 45, 45, 0 )
+		_light.Rotate( 54, 144, 0 )
 		_light.CastsShadow = True
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		_light.Name = "Light"
