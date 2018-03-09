@@ -59,11 +59,12 @@ Class PlaneDemo Extends Window
 	Field _sfxEngine:Sound
 
 	Field _drawInfo:= False 
-	Field _drawGraph:= False 	
+	Field _drawGraph:= False 
+	Field _showHelp := False
+	
 	Field _init := False
 	Field _firstFrame := True
 	Field _res :Vec2f
-	Field _showHelp := False
 	Field _originalAspect: Float
 	Field _sampling := 1.0
 	
@@ -88,12 +89,17 @@ Class PlaneDemo Extends Window
 	Field _helpText2:Paragraph
 	Field _helpText3:Paragraph
 	Field _helpText4:Paragraph
-	Field _helpText5:Paragraph
 	
 	Public
 	
 	Method New()
-		Super.New( "Flying Monkey", 1280, 720, WindowFlags.Resizable )
+		
+		#If __DESKTOP_TARGET__
+			Super.New( "Flying Monkey", 1440, 720, WindowFlags.Resizable | WindowFlags.HighDPI )
+		#Else
+			Super.New( "Flying Monkey", 1280, 720, Null )
+		#End
+		
 		_res = New Vec2f( Width, Height )
 		_originalAspect = _res.x / _res.y
 		Layout = "letterbox"
@@ -157,7 +163,14 @@ Class PlaneDemo Extends Window
 			New StackedMessage( "Toggle debug graph")
 		End
 		
-		If Keyboard.KeyHit( Key.Escape )
+		If Keyboard.KeyHit( Key.P )
+			For Local p := Eachin _scene.GetPostEffects()
+				p.Enabled = Not p.Enabled
+			Next
+			New StackedMessage( "Toggle post effects")
+		End
+		
+		If Keyboard.KeyHit( Key.Space ) Or Keyboard.KeyHit( Key.F1 ) 
 			_showHelp = Not _showHelp
 			Message.ClearAll()
 		End

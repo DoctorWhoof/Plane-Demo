@@ -14,6 +14,7 @@ Code:
 ------------------------------------------------------------------------------------
 
 Assets:
+	- See what's going on with the cockpit low res version (not preserving edges)
 	- Decals
 	- Model and texture Island
 	
@@ -47,6 +48,8 @@ Done!
 			-Red and white patterns
 			-Separate canopi material from body (not necessary)
 	- Airplane interior
+	- Textures seem to have lost wearing on the rivets
+	- Fix pontoons
 	
 Discarded:
 

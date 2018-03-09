@@ -5,7 +5,7 @@ Namespace mojo3d
 Class Airplane Extends Behaviour
 	
 	Field maxRoll := 45.0
-	Field maxYaw := 30.0
+	Field maxYaw := 10.0
 	Field maxPitch := 15.0
 	
 	Field maxRudder := 20.0
@@ -38,7 +38,7 @@ Class Airplane Extends Behaviour
 	Field time:Float
 	
 	Field roll:= New SmoothDouble( 0, 2.0, 20.0, True )
-	Field yaw:= New SmoothDouble( 0, 1.0, 20.0, True )
+	Field yaw:= New SmoothDouble( 0, 0.25, 50.0, True )
 	Field pitch:= New SmoothDouble( 0, 2.0, 50.0, True)
 	
 	Field rudderValue := New SmoothDouble( 0, 3.0, 2.0, False )
@@ -128,7 +128,10 @@ Class Airplane Extends Behaviour
 		
 
 		model.LocalRz = roll.Get( delta )
+'		body.LocalRy = yaw.Get( delta )
 		body.LocalRx = pitch.Get( delta )
+		
+		
 		rudder.LocalRy = rudderValue.Get( delta )
 		aileron_L.LocalRx = aileron_L_value.Get(delta )
 		aileron_R.LocalRx = aileron_R_value.Get( delta )

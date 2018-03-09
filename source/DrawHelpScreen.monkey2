@@ -29,19 +29,19 @@ Class PlaneDemo Extension
 		_helpText2.Add( "~nField of view", 2 )
 		_helpText2.Add( "Zoom In/Out:  Equals, Minus",0 )
 		
-		_helpText2.Add( "~nReset translation: Space bar", 0 )
-		_helpText2.Add( "Reset rotation: Shift+Space bar", 0 )
-		_helpText2.Add( "Reset FOV: Shift+Space bar", 0 )
+		_helpText2.Add( "~n~n~nReset translation and FOV: R", 0 )
+		_helpText2.Add( "Reset rotation: Shift+R", 0 )
 		
-		_helpText3 = New Paragraph( "Press Escape to resume flying", 2, 0.6, New Vec2f( 0.5, 1.0 ) )
-'		
+		_helpText3 = New Paragraph( "Press space to resume flying", 2, 0.6, New Vec2f( 0.5, 1.0 ) )
+
 		_helpText4 = New Paragraph( "User Interface", 3, 1.2, New Vec2f( 1, 1 ) )
 		
-		_helpText4.Add( "Help screen: Escape", 0 )
+		_helpText4.Add( "Help screen: Space bar", 0 )
 		_helpText4.Add( "Debug info: Tab", 0 )
 		_helpText4.Add( "Select camera: 1, 2", 0 )
 		_helpText4.Add( "Toggle camera shake: Enter", 0 )
 		_helpText4.Add( "Toggle render quality: Slash", 0 )
+		_helpText4.Add( "Toggle post effects: P", 0 )
 		
 		_helpText4.Add( "~nAirplane controls", 3 )
 		_helpText4.Add( "Turn Left/Right: Cursor Left, Right", 0 )
@@ -60,15 +60,15 @@ Class PlaneDemo Extension
 		
 		canvas.DrawRect(0, 0, Width, Height, _helpScreen )
 		
-		_helpText1.Draw( canvas, Width/2, Height*0.05 )
+		_helpText1.Draw( canvas, Width/2, Height*0.025 )
 		
-		canvas.DrawLine( Width*0.05, Height*0.2, Width*0.95, Height*0.2 )
+		canvas.DrawLine( Width*0.05, Height*0.15, Width*0.95, Height*0.15 )
 		
-		_helpText2.Draw( canvas, Width*0.05, Height*0.25 )
+		_helpText2.Draw( canvas, Width*0.05, Height*0.2 )
 		
-		_helpText3.Draw( canvas, Width/2, Height*0.25 )
+		_helpText3.Draw( canvas, Width/2, Height*0.2 )
 		
-		_helpText4.Draw( canvas, Width*0.95, Height*0.25 )
+		_helpText4.Draw( canvas, Width*0.95, Height*0.2 )
 		
 	End
 	

@@ -23,6 +23,7 @@ Class CameraControl Extends Behaviour
 	Field dolly:Entity
 	Field orbiter:Entity
 	Field lookAhead:Entity
+	Field target:Entity
 	
 	Private
 	Field _cam:Camera
@@ -42,7 +43,7 @@ Class CameraControl Extends Behaviour
 		
 		Local delta := SmoothDelta( elapsed )
 		
-		dolly.PointAt( orbiter.Position )
+		dolly.PointAt( target.Position )
 		
 		If Keyboard.KeyDown( Key.LeftShift ) Or  Keyboard.KeyDown( Key.RightShift )
 
@@ -64,7 +65,7 @@ Class CameraControl Extends Behaviour
 				Entity.Rz -= (speed/2.0) * delta
 			Endif
 			
-			If Keyboard.KeyHit( Key.Space )
+			If Keyboard.KeyHit( Key.R )
 				Entity.LocalRotation = New Vec3f
 				New StackedMessage( "Reset camera rotation" )
 			End
@@ -89,7 +90,7 @@ Class CameraControl Extends Behaviour
 				Entity.LocalZ -= (speed/10.0) * delta
 			Endif
 			
-			If Keyboard.KeyHit( Key.Space )
+			If Keyboard.KeyHit( Key.R )
 				Entity.LocalPosition = New Vec3f
 				orbiter.LocalRotation = New Vec3f
 				_cam.FOV = fov

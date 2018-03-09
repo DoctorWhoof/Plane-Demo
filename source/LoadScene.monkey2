@@ -57,8 +57,9 @@ Class PlaneDemo Extension
 		_water.Name = "Water"
 		
 		'Bloom - A little slow on my laptop, turning it off for now. Will make an option for it later, should be fine on desktop.
-'		Local _bloom := New BloomEffect
-'		_scene.AddPostEffect( _bloom )
+		Local _bloom := New BloomEffect
+		_scene.AddPostEffect( _bloom )
+		_bloom.Enabled = False
 		
 		'create main pivot
 		_pivot = New Entity
@@ -78,6 +79,7 @@ Class PlaneDemo Extension
 		Local canopi := _plane.GetChild( "canopi" )
 		canopi.AssignMaterialToHierarchy( New PbrMaterial( New Color(0, 0.1, 0, 0.4 ), 0.05, 0.1 ) )
 		canopi.Alpha = 0.5
+'		canopi.CastsShadow = False
 		
 		'Plane animation controller
 		Local planeAnim := _plane.AddComponent< Airplane >()
@@ -103,6 +105,7 @@ Class PlaneDemo Extension
 		'camera orbit pivot
 		Local _camOrbit := New Entity( _pivot )
 		_camOrbit.Name = "CameraOrbit"
+'		_camOrbit.Ry = -15
 		
 		'camera dolly
 		Local _camDolly := New Entity( _camOrbit )
@@ -155,6 +158,7 @@ Class PlaneDemo Extension
 		camControl.dolly = _camDolly
 		camControl.orbiter = _camOrbit
 		camControl.lookAhead = _camLooker
+		camControl.target = _monkey
 		
 		'Audio
 '		_channelMusic = Audio.PlayMusic( "asset::MagicForest.ogg")
@@ -163,7 +167,8 @@ Class PlaneDemo Extension
 		_channelSfx0.Volume = 0.5
 		
 
-		New Message( "Hit Escape key for instructions...", Width/2, Height*0.2, 2.0, 4.0, 2.0, 2.0 )
+		New Message( "Hit space bar for instructions...", Width/2, Height*0.15, 2.0, 5.0, 3.0, 2.0 )
+		New Message( "Use W,A,S,D,Z, and X to control the camera", Width/2, Height*0.15, 2.0, 4.0, 2.0, 12.0 )
 		
 		New ScreenFade( 0, 0.1, 4.0, 0.1 )
 		
