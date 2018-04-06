@@ -177,13 +177,15 @@ Class PlaneDemo Extends Window
 		
 		If Keyboard.KeyHit( Key.Slash )
 			_sampling *= 2.0
-			If _sampling > 2.0 Then _sampling = 0.25
+			If _sampling > 2.0 Then _sampling = 0.5
 			New StackedMessage( "Render quality set to " + Format(_sampling, 2) )
 			CreateImageCanvas()
 		End
 		
 		'Draw stuff
 		_scene.Update()
+		_activeCamera.View = Null
+		_activeCamera.Viewport = New Recti( 0, 0, _renderTarget.Width, _renderTarget.Height )
 		_activeCamera.Render( _renderCanvas )
 		_renderCanvas.Flush()
 		
@@ -191,11 +193,7 @@ Class PlaneDemo Extends Window
 		canvas.Color = Color.White
 		
 		'Camera renders upside down, for some reason?
-		canvas.PushMatrix()
-		canvas.Scale( 1.0, -1.0 )
-		canvas.Translate( 0, -Height )
-		canvas.DrawImage( _renderTarget, 0, 0, 0.0, 1.0/_sampling, 1.0/_sampling )
-		canvas.PopMatrix()
+		canvas.DrawImage( _renderTarget, 0, 0, 0, 1.0/_sampling, 1.0/_sampling )
 		
 		'Debug messages and miscellaneous view options.
 		Echo.Add( "Window Resolution: " + Frame.Width + "," + Frame.Height )
