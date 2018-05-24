@@ -38,6 +38,9 @@ Class PlaneDemo Extension
 		_light.CastsShadow = True
 		_light.Color = New Color( 1.2, 1.0, 0.8, 1.0 )
 		_light.Name = "Light"
+		
+		Local godrays:=New GodraysEffect( _light )
+		_scene.AddPostEffect( godrays )
 
 		'create water material
 		Local waterMaterial:=New WaterMaterial
@@ -62,7 +65,7 @@ Class PlaneDemo Extension
 		_bloom.Enabled = False
 		
 		'create main pivot
-		_pivot = New Entity
+		_pivot = New Pivot
 		_pivot.Visible = True
 		_pivot.Name = "Pivot"
 		_pivot.Position = New Vec3f( 0, 20, 0 )
@@ -103,17 +106,17 @@ Class PlaneDemo Extension
 		helmet.GetChild( "helmet_glass_low").Alpha = 0.5
 
 		'camera orbit pivot
-		Local _camOrbit := New Entity( _pivot )
+		Local _camOrbit := New Pivot( _pivot )
 		_camOrbit.Name = "CameraOrbit"
 '		_camOrbit.Ry = -15
 		
 		'camera dolly
-		Local _camDolly := New Entity( _camOrbit )
+		Local _camDolly := New Pivot( _camOrbit )
 		_camDolly.Move( 0,4,8 )
 		_camDolly.Name = "CameraDolly"
 		
 		'Camera noise
-		Local _camNoise := New Entity( _camDolly )
+		Local _camNoise := New Pivot( _camDolly )
 		_camNoise.Name = "CamNoise"
 		
 		Local camShake := _camNoise.AddComponent< Noise3D >()
@@ -130,7 +133,7 @@ Class PlaneDemo Extension
 		camShake.AddCurve( Axis.Z, 0.1 * shakeMult, 0.5 * freqMult, SMOOTH, 200.0 )
 		
 		'create camera "look ahead"
-		Local _camLooker := New Entity( _camNoise )
+		Local _camLooker := New Pivot( _camNoise )
 		_camLooker.Name = "CameraLooker"
 		
 		'create camera 1
