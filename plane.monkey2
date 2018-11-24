@@ -18,6 +18,7 @@ Namespace plane
 #Import "source/Graph"
 #Import "source/Paragraph"
 #Import "source/DrawHelpScreen"
+#Import "source/WaterFowMaterial"
 
 #Import "extensions/Model"
 #Import "extensions/Canvas"
@@ -58,8 +59,8 @@ Class PlaneDemo Extends Window
 	Field _channelSfx0:Channel
 	Field _sfxEngine:Sound
 
-	Field _drawInfo:= False 
-	Field _drawGraph:= False 
+	Field _drawInfo:= False
+	Field _drawGraph:= False
 	Field _showHelp := False
 	
 	Field _init := False
@@ -99,6 +100,8 @@ Class PlaneDemo Extends Window
 		#Else
 			Super.New( "Flying Monkey", 1280, 720, Null )
 		#End
+		
+		SetConfig( "MOJO3D_RENDERER","forward" )
 		
 		_res = New Vec2f( Width, Height )
 		_originalAspect = _res.x / _res.y
@@ -170,7 +173,7 @@ Class PlaneDemo Extends Window
 			New StackedMessage( "Toggle post effects")
 		End
 		
-		If Keyboard.KeyHit( Key.Space ) Or Keyboard.KeyHit( Key.F1 ) 
+		If Keyboard.KeyHit( Key.Space ) Or Keyboard.KeyHit( Key.F1 )
 			_showHelp = Not _showHelp
 			Message.ClearAll()
 		End
@@ -208,6 +211,7 @@ Class PlaneDemo Extends Window
 			DrawHelpScreen( canvas )
 		End
 		
+		canvas.DrawText( App.FPS, Width-10, Height-10, 1, 1 )
 		If _drawInfo And Not _showHelp
 			Echo.Draw( canvas, 10, 8, 0.75 )
 		Else
